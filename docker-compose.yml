@@ -1,0 +1,9 @@
+version: '2'
+services:
+  shadowsocks:
+    container_name: shadowsocks_server
+    restart: always
+    image: solidfd/ssr
+    ports:
+    - "220:22"
+    - "889:8080"
