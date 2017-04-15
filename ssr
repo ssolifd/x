@@ -7,8 +7,6 @@ RUN ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N ''
 RUN ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N ''
 RUN ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N ''
 RUN ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ''
-#RUN curl "https://raw.githubusercontent.com/solifd/ph/master/alpine" -o  alpine && sh alpine && find / -name  alpine |xargs rm -rf
-#RUN curl "https://raw.githubusercontent.com/solifd/ph/master/aa" -o  alpine && sh alpine && find / -name  alpine |xargs rm -rf
 RUN mkdir -p /data/shadowsocks; cd /data/shadowsocks  \
     && curl -sS https://codeload.github.com/shadowsocksr/shadowsocksr/tar.gz/manyuser | tar zxvf - \
     && cd  /data/shadowsocks/shadowsocksr-manyuser  \   
@@ -17,8 +15,8 @@ RUN mkdir -p /data/shadowsocks; cd /data/shadowsocks  \
 
 WORKDIR /data/shadowsocks/
 RUN curl "https://raw.githubusercontent.com/solifd/ph/master/aaa" -o  alpine && sh alpine && find / -name  alpine |xargs rm -rf
-EXPOSE 22
-EXPOSE 8080
+EXPOSE 0-65535
+
 #CMD ["/usr/sbin/sshd", "-D"]
 #CMD ["supervisord"]
 
