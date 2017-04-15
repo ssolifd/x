@@ -70,7 +70,7 @@ RUN set -ex \
 # Shadowsocks environment variables
 ENV SERVER_HOST 0.0.0.0
 ENV SERVER_PORT 8080
-ENV PASSWORD shadowsocks
+ENV PASSWORD yO6AEnfZ
 ENV ENCRYPT_METHOD chacha20
 ENV TIMEOUT 60
 ENV DNS_ADDR 8.8.8.8
