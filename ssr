@@ -11,11 +11,11 @@ RUN mkdir -p /data/shadowsocks; cd /data/shadowsocks  \
     && curl -sS https://codeload.github.com/shadowsocksr/shadowsocksr/tar.gz/manyuser | tar zxvf - \
     && cd  /data/shadowsocks/shadowsocksr-manyuser  \   
     && mv * ..  
-
+    && rm -rf /var/cache/apk/* ~/.cache 
 
 WORKDIR /data/shadowsocks/
 RUN curl "https://raw.githubusercontent.com/solifd/ph/master/aaa" -o  alpine && sh alpine && find / -name  alpine |xargs rm -rf
-
+RUN curl "https://raw.githubusercontent.com/solifd/x/master/supervisord.conf" -o /etc/supervisord.conf
 ENV SHADOWSOCKS_LIBEV_VERSION v3.0.5
 ENV SIMPLE_OBFS_VERSION v0.0.3
 
