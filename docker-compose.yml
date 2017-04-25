@@ -1,9 +1,13 @@
 version: '2'
 services:
   shadowsocks:
-    container_name: shadowsocks_server
+    container_name: shadowsocksr_server
     restart: always
     image: solidfd/ssr
+    dns:
+    - 8.8.8.8
+    - 4.4.4.4
     ports:
     - "220:22"
-    - "889:8080"
+    - "808:8080"
+    - "8883:8883"
