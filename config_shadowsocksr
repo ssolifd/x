@@ -1,3 +1,4 @@
+#curl "https://raw.githubusercontent.com/solifd/x/master/config_shadowsocksr" -o config_shadowsocksr && chmod 755 config_shadowsocksr &&./config_shadowsocksr &&  rm -rf config_shadowsocksr
 function config_shadowsocks(){
  if [[ -e /etc/shadowsocks.json ]]; then
  rm -rf /etc/shadowsocks.json
