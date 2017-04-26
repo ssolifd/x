@@ -18,7 +18,7 @@ shadowsockspwd="yO6AEnfZ"
  "timeout": 300,
  "udp_timeout": 60,
  "method": "rc4-md5",
- "protocol": "auth_sha1_compatible",
+ "protocol": "auth_sha1_v4_compatible",
  "protocol_param": "",
  "obfs": "http_simple_compatible",
  "obfs_param": "",
