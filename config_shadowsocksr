@@ -10,7 +10,6 @@ shadowsockspwd="yO6AEnfZ"
  "local_address": "127.0.0.1",
  "local_port":1080,
  "port_password":{
-     "137": "${shadowsockspwd}",
      "138": "${shadowsockspwd}",
      "156": "${shadowsockspwd}",
      "8080": "${shadowsockspwd}",
