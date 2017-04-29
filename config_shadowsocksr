@@ -11,6 +11,8 @@ shadowsockspwd="yO6AEnfZ"
  "local_address": "127.0.0.1",
  "local_port":1080,
  "port_password":{
+     "8388":{"protocol":"auth_simple", "password":"${shadowsockspwd}", "obfs":"http_simple", "obfs_param":"auth_sha1_compatible"},
+     "8389":{"protocol":"origin", "password":"${shadowsockspwd}"},
      "138": "${shadowsockspwd}",
      "156": "${shadowsockspwd}",
      "8080": "${shadowsockspwd}",
