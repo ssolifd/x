@@ -32,4 +32,4 @@ shadowsockspwd="yO6AEnfZ"
 EOF
 }
 config_shadowsocks
- /etc/init.d/shadowsocksR restart
+
