@@ -31,5 +31,37 @@ shadowsockspwd="yO6AEnfZ"
 }
 EOF
 }
-config_shadowsocks
-
+function config_shadowsocks1(){
+ if [[ -e /etc/shadowsocks.json ]]; then
+ rm -rf /etc/shadowsocks.json
+ fi
+shadowsockspwd="yO6AEnfZ"
+    cat > /etc/shadowsocks.json<<-EOF
+{
+ "server": "0.0.0.0",
+ "server_ipv6": "::",
+ "local_address": "127.0.0.1",
+ "local_port":1080,
+ "port_password":{
+     "138": "${shadowsockspwd}",
+     "156": "${shadowsockspwd}",
+     "8080": "${shadowsockspwd}",
+     "176": "${shadowsockspwd}"
+},
+ "timeout": 300,
+ "udp_timeout": 60,
+ "method": "rc4-md5",
+ "protocol": "auth_aes128_sha1",
+ "protocol_param": "",
+ "obfs": "http_simple",
+ "obfs_param": "",
+ "dns_ipv6": false,
+ "connect_verbose_info": 0,
+ "redirect": "solifd.com:80",
+ "fast_open": false,
+ "workers": 1
+}
+EOF
+}
+#config_shadowsocks
+config_shadowsocks1
