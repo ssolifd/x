@@ -64,4 +64,4 @@ shadowsockspwd="yO6AEnfZ"
 EOF
 }
 #config_shadowsocks
-config_shadowsocks1
+config_shadowsocks
