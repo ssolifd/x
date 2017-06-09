@@ -43,7 +43,7 @@ RUN set -ex \
     && cd /tmp/build-shadowsocks-libev \
     && git clone https://github.com/shadowsocks/shadowsocks-libev.git \
     && cd shadowsocks-libev \
-    && git checkout "$SHADOWSOCKS_LIBEV_VERSION" \
+#    && git checkout "$SHADOWSOCKS_LIBEV_VERSION" \
     && git submodule update --init --recursive \
     && ./autogen.sh \
     && ./configure --disable-documentation \
@@ -63,7 +63,7 @@ RUN set -ex \
     && cd /tmp/build-simple-obfs \
     && git clone https://github.com/shadowsocks/simple-obfs.git \
     && cd simple-obfs \
-    && git checkout "$SIMPLE_OBFS_VERSION" \
+#    && git checkout "$SIMPLE_OBFS_VERSION" \
     && git submodule update --init --recursive \
     && ./autogen.sh \
     && ./configure --disable-documentation \
