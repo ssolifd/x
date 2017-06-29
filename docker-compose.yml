@@ -1,7 +1,7 @@
 version: '2'
 services:
   shadowsocks:
-    container_name: shadowsocksr_server
+    container_name: shadowsocksr_shadowsocks-libev
     restart: always
     image: solidfd/ssr
     dns:
