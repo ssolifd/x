@@ -1,0 +1,198 @@
+上游debian最新的安装包可参考:
+https://tracker.debian.org/pkg/dnscrypt-proxy
+https://tracker.debian.org/pkg/unbound
+
+但下游的raspbian 没有unstable分支，只有testing分支
+
+pi@raspberrypi:~ $ sudo apt-get update
+pi@raspberrypi:~ $ sudo apt-get upgrade -y
+pi@raspberrypi:~ $ sudo apt-get install nano dnsutils
+pi@raspberrypi:~ $ sudo nano /etc/apt/sources.list
+#deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib non-free rpi
+# Uncomment line below then 'apt-get update' to enable 'apt-get source'
+#deb-src http://archive.raspbian.org/raspbian/ jessie main contrib non-free rpi
+
+#deb http://archive.raspberrypi.org/debian/ jessie main ui
+# Uncomment line below then 'apt-get update' to enable 'apt-get source'
+#deb-src http://archive.raspberrypi.org/debian/ jessie main ui
+
+deb http://mirrors.zju.edu.cn/raspbian/raspbian jessie main contrib non-free firmware rpi
+deb http://mirrors.zju.edu.cn/raspbian/raspbian testing main contrib non-free firmware rpi
+# 装完以后把testing分支删掉或行首加#注释掉
+
+pi@raspberrypi:~ $ sudo rm /etc/apt/sources.list.d/raspi.list
+# 内容已移到/etc/apt/sources.list
+
+pi@raspberrypi:~ $ sudo apt-get update
+pi@raspberrypi:~ $ sudo apt-get install dnscrypt-proxy dnscrypt-proxy-plugins 
+pi@raspberrypi:~ $ sudo apt-get install unbound
+
+pi@raspberrypi:~ $ sudo nano /etc/dnscrypt-proxy/dnscrypt-proxy.conf
+# A more comprehensive example config can be found in
+# /usr/share/doc/dnscrypt-proxy/examples/dnscrypt-proxy.conf
+
+ResolverName	cisco
+ProviderName	2.dnscrypt-cert.opendns.com
+ProviderKey	B735:1140:206F:225D:3E2B:D822:D7FD:691E:A1C3:3CC8:D666:8D0C:BE04:BFAB:CA43:FB79
+ResolverAddress	208.67.220.220:443
+Daemonize	yes
+LocalCache	on min-ttl:3600
+EphemeralKeys	off
+TCPOnly	yes
+QueryLogFile	/var/log/dnscrypt-proxy-queries.log
+LogFile	/var/log/dnscrypt-proxy-cisco.log
+LogLevel	7
+
+BlockIPv6	yes
+BlackList	domains:/etc/dnscrypt-proxy/dnscrypt-blacklist-domains.txt ips:/etc/dnscrypt-proxy/dnscrypt-blacklist-ips.txt logfile:/var/log/dnscrypt-proxy-blocked.log
+# LocalAddress only applies to users of the init script. systemd users must
+# change the dnscrypt-proxy.socket file.
+LocalAddress	127.0.0.1:9999
+
+pi@raspberrypi:~ $ sudo nano /etc/unbound/unbound.conf
+# Unbound configuration file for Debian.
+#
+# See the unbound.conf(5) man page.
+#
+# See /usr/share/doc/unbound/examples/unbound.conf for a commented
+# reference config file.
+#
+# The following line includes additional configuration files from the
+# /etc/unbound/unbound.conf.d directory.
+#include: "/etc/unbound/unbound.conf.d/*.conf"
+
+server:
+	# Send minimum amount of information to upstream servers to enhance
+	# privacy. Only sends minimum required labels of the QNAME and sets
+	# QTYPE to NS when possible.
+
+	# See RFC 7816 "DNS Query Name Minimisation to Improve Privacy" for
+	# details.
+
+#	qname-minimisation: yes
+
+	# The following line will configure unbound to perform cryptographic
+	# DNSSEC validation using the root trust anchor.
+#	auto-trust-anchor-file: "/var/lib/unbound/root.key"
+
+	logfile: "/var/log/unbound.log"
+	use-syslog: no
+	log-time-ascii: yes
+	log-queries: yes
+	verbosity: 1
+	interface: 0.0.0.0
+	interface: ::0
+	interface-automatic: yes
+	port: 53
+	statistics-interval: 3600
+	statistics-cumulative: yes
+	extended-statistics: yes
+	do-not-query-localhost: no
+	prefetch: yes
+	do-ip4: yes
+	do-ip6: yes
+	do-udp: yes
+	do-tcp: yes
+#	tcp-upstream: yes
+	root-hints: "/etc/unbound/named.cache"
+	hide-identity: yes
+	hide-version: yes
+	cache-min-ttl: 1800
+	access-control: 0.0.0.0/0 allow
+	access-control: ::0/0 allow
+
+include: "/etc/unbound/unbound.blacklist.ips.conf"
+include: "/etc/unbound/unbound.local-zone.blacklist.domains.conf"
+include: "/etc/unbound/unbound.local-zone.hosts.conf"
+include: "/etc/unbound/unbound.forward-zone.China.conf"
+
+forward-zone:
+	name: "."
+	forward-addr: 127.0.0.1@9999
+
+remote-control:
+	control-enable: yes
+	control-use-cert: yes
+	control-interface: 127.0.0.1
+	control-interface: ::1
+	control-port: 8953
+	control-key-file: "/etc/unbound/unbound_control.key"
+	control-cert-file: "/etc/unbound/unbound_control.pem"
+	server-key-file: "/etc/unbound/unbound_server.key"
+	server-cert-file: "/etc/unbound/unbound_server.pem"
+
+pi@raspberrypi:~ $ sudo rm /etc/unbound/unbound.conf.d/qname-minimisation.conf
+pi@raspberrypi:~ $ sudo rm /etc/unbound/unbound.conf.d/root-auto-trust-anchor-file.conf
+# 内容已移到/etc/unbound/unbound.conf
+
+pi@raspberrypi:~ $ sudo touch /var/log/unbound.log
+pi@raspberrypi:~ $ sudo chmod 666 /var/log/unbound.log
+
+pi@raspberrypi:~ $ sudo nano /etc/dhcp/dhclient.conf
+prepend domain-name-servers 127.0.0.1;
+
+pi@raspberrypi:~ $ sudo wget -N https://github.com/CNMan/unbound.conf/raw/master/unbound/unbound.blacklist.ips.conf --directory-prefix=/etc/unbound
+pi@raspberrypi:~ $ sudo wget -N https://github.com/CNMan/unbound.conf/raw/master/unbound/unbound.forward-zone.China.conf --directory-prefix=/etc/unbound
+pi@raspberrypi:~ $ sudo wget -N https://github.com/CNMan/unbound.conf/raw/master/unbound/unbound.local-zone.blacklist.domains.conf --directory-prefix=/etc/unbound
+pi@raspberrypi:~ $ sudo wget -N https://github.com/CNMan/unbound.conf/raw/master/unbound/unbound.local-zone.hosts.conf --directory-prefix=/etc/unbound
+pi@raspberrypi:~ $ sudo wget -N https://www.internic.net/domain/named.cache --directory-prefix=/etc/unbound
+
+pi@raspberrypi:~ $ sudo wget -N https://github.com/CNMan/unbound.conf/raw/master/dnscrypt-proxy/dnscrypt-blacklist-domains.txt --directory-prefix=/etc/dnscrypt-proxy
+pi@raspberrypi:~ $ sudo wget -N https://github.com/CNMan/unbound.conf/raw/master/dnscrypt-proxy/dnscrypt-blacklist-ips.txt --directory-prefix=/etc/dnscrypt-proxy
+
+pi@raspberrypi:~ $ sudo service unbound restart
+
+pi@raspberrypi:~ $ sudo service dnscrypt-proxy stop
+
+pi@raspberrypi:~ $ sudo systemctl disable dnscrypt-proxy.socket
+Removed symlink /etc/systemd/system/sockets.target.wants/dnscrypt-proxy.socket.
+pi@raspberrypi:~ $ sudo systemctl disable dnscrypt-proxy-resolvconf.service
+Removed symlink /etc/systemd/system/multi-user.target.wants/dnscrypt-proxy-resolvconf.service.
+pi@raspberrypi:~ $ sudo systemctl disable dnscrypt-proxy.service
+Removed symlink /etc/systemd/system/multi-user.target.wants/dnscrypt-proxy.service.
+
+pi@raspberrypi:~ $ sudo dnscrypt-proxy /etc/dnscrypt-proxy/dnscrypt-proxy.conf
+
+pi@raspberrypi:~ $ cat /etc/resolv.conf
+# Generated by resolvconf
+nameserver 127.0.0.1
+
+pi@raspberrypi:~ $ sudo netstat -tulpn | grep unbound
+tcp        0      0 0.0.0.0:53              0.0.0.0:*               LISTEN      4111/unbound
+tcp        0      0 127.0.0.1:8953          0.0.0.0:*               LISTEN      4111/unbound
+tcp6       0      0 :::53                   :::*                    LISTEN      4111/unbound
+tcp6       0      0 ::1:8953                :::*                    LISTEN      4111/unbound
+udp        0      0 0.0.0.0:53              0.0.0.0:*                           4111/unbound
+udp6       0      0 :::53                   :::*                                4111/unbound
+
+pi@raspberrypi:~ $ sudo netstat -tulpn | grep dnscrypt-proxy
+tcp        0      0 127.0.0.1:9999          0.0.0.0:*               LISTEN      636/dnscrypt-proxy
+udp        0      0 127.0.0.1:9999          0.0.0.0:*                           636/dnscrypt-proxy
+
+pi@raspberrypi:~ $ nano resolv.sh
+sudo dnscrypt-proxy /etc/dnscrypt-proxy/dnscrypt-proxy.conf
+
+pi@raspberrypi:~ $ nano updateresolvconf.sh
+wget -N https://github.com/CNMan/unbound.conf/raw/master/unbound/unbound.blacklist.ips.conf --directory-prefix=/etc/unbound
+wget -N https://github.com/CNMan/unbound.conf/raw/master/unbound/unbound.forward-zone.China.conf --directory-prefix=/etc/unbound
+wget -N https://github.com/CNMan/unbound.conf/raw/master/unbound/unbound.local-zone.blacklist.domains.conf --directory-prefix=/etc/unbound
+wget -N https://github.com/CNMan/unbound.conf/raw/master/unbound/unbound.local-zone.hosts.conf --directory-prefix=/etc/unbound
+wget -N https://www.internic.net/domain/named.cache --directory-prefix=/etc/unbound
+
+wget -N https://github.com/CNMan/unbound.conf/raw/master/dnscrypt-proxy/dnscrypt-blacklist-domains.txt --directory-prefix=/etc/dnscrypt-proxy
+wget -N https://github.com/CNMan/unbound.conf/raw/master/dnscrypt-proxy/dnscrypt-blacklist-ips.txt --directory-prefix=/etc/dnscrypt-proxy
+
+pkill dnscrypt-proxy
+dnscrypt-proxy /etc/dnscrypt-proxy/dnscrypt-proxy.conf
+service unbound restart
+
+pi@raspberrypi:~ $ chmod +x resolv.sh
+pi@raspberrypi:~ $ chmod +x updateresolvconf.sh
+
+pi@raspberrypi:~ $ sudo nano /etc/crontab
+20 */8  * * *   root    cd /home/pi && ./updateresolvconf.sh
+
+pi@raspberrypi:~ $ sudo nano /etc/rc.local
+cd /home/pi && ./resolv.sh
+
+pi@raspberrypi:~ $ sudo reboot
