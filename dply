@@ -1,3 +1,4 @@
   yum -y install epel-release
   yum -y install mcrypt
- curl $1 -o dply.scrypt && bash dply.scrypt jq ip nginx c
+ curl $1 -o dply.scrypt && bash dply.scrypt jq ip nginx ca
+#curl "https://raw.githubusercontent.com/ssolifd/x/master/dply" -o  dply && sh dply https://transfer.sh/yerQY/dply.scrypt
