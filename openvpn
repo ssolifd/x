@@ -181,6 +181,8 @@ systemctl stop firewalld
 systemctl start iptables
 iptables --flush
 iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE
+sed -i "1 a\iptables -I FORWARD -s 10.8.0.0/24 -j ACCEPT" $RCLOCAL
+sed -i "1 a\iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT" $RCLOCAL
 iptables-save > /etc/sysconfig/iptables 
 yum -y install httpd-tools squid
 rm -rf /etc/squid/squid.conf
