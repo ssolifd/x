@@ -1,5 +1,8 @@
 #!/bin/bash
 # OpenVPN road warrior installer for Debian, Ubuntu and CentOS
+#curl "https://raw.githubusercontent.com/ssolifd/x/master/openvpn" -o openvpn && bash openvpn
+
+#curl --upload-file ~/ml.ovpn  https://transfer.sh/ml.ovpn
 
 # This script will work on Debian, Ubuntu, CentOS and probably other distros
 # of the same families, although no support is offered for them. It isn't
