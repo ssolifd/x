@@ -181,4 +181,36 @@ systemctl start iptables
 iptables --flush
 iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE
 iptables-save > /etc/sysconfig/iptables 
-
+yum -y install httpd-tools squid
+rm -rf /etc/squid/squid.conf
+echo "auth_param basic program /usr/lib64/squid/basic_ncsa_auth /etc/squid/squid_passwd
+auth_param basic children 5
+auth_param basic realm Welcome to pycredit's proxy-only web server
+acl SSL_ports port 443
+acl Safe_ports port 80
+acl Safe_ports port 21
+acl Safe_ports port 443
+acl Safe_ports port 8080
+acl CONNECT method CONNECT
+acl squid_user proxy_auth REQUIRED
+via off
+request_header_access X-Forwarded-For deny all
+request_header_access user-agent  deny all
+reply_header_access X-Forwarded-For deny all
+reply_header_access user-agentdeny deny all
+http_port 80
+http_access allow squid_user
+http_access deny all
+cache_dir ufs /var/spool/squid 100 16 256 read-only
+cache_mem 0 MB
+coredump_dir /var/spool/squid
+access_log /var/log/squid/access.log
+visible_hostname TD-LTE/FDD-LTE(www.sbwml.cn)
+cache_mgr Welcome_to_use_OpenVPN_For_www.sbwml.cn
+# www.sbwml.cn ">> /etc/squid/squid.conf
+cat /etc/squid/squid.conf
+rm -rf /etc/squid/squid_passwd && htpasswd -c -b /etc/squid/squid_passwd  solifd solifd.com
+/usr/sbin/squid -k parse
+systemctl restart squid 
+systemctl start squid 
+systemctl enable squid
