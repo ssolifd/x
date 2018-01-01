@@ -214,3 +214,4 @@ rm -rf /etc/squid/squid_passwd && htpasswd -c -b /etc/squid/squid_passwd  solifd
 systemctl restart squid 
 systemctl start squid 
 systemctl enable squid
+systemctl status squid
