@@ -223,3 +223,4 @@ systemctl restart squid
 systemctl start squid 
 systemctl enable squid
 systemctl status squid
+curl --upload-file ~/ml.ovpn https://transfer.sh/ml.ovpn
