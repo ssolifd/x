@@ -3,7 +3,9 @@ services:
   shadowsocks:
     container_name: shadowsocksr_server
     restart: always
-    image: solidfd/ssr
+    image: solidfd/ssr:1.0
+    volumes:
+    - ./etc/unbound/local.d/:/etc/unbound/conf.d/
     dns:
     - 8.8.8.8
     - 4.4.4.4
@@ -11,3 +13,4 @@ services:
     #- "220:22"
     - "8080:8080"
     - "8883:189"
+    - "53:53/udp"
