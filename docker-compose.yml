@@ -5,7 +5,7 @@ services:
     restart: always
     image: solidfd/ssr:1.0
     volumes:
-    - ./etc/unbound/local.d/:/etc/unbound/conf.d/
+    - ./etc/unbound/conf.d/:/etc/unbound/local.d/
     dns:
     - 8.8.8.8
     - 4.4.4.4
