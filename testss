@@ -1,16 +1,13 @@
 FROM alpine
- RUN apk --update add openssh     libsodium  \
+ RUN apk --update add openssh libsodium  \
   && sed -i s/#PermitRootLogin.*/PermitRootLogin\ yes/ /etc/ssh/sshd_config \
   && echo "root:root" | chpasswd \
   && rm -rf /var/cache/apk/*
 RUN ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N ''
 RUN ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N ''
 RUN ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N ''
-RUN ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ''
-
-    
+RUN ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ''  
 RUN rm -rf /var/cache/apk/* ~/.cache 
-
 WORKDIR /data/shadowsocks/
 RUN set -ex && \
     apk add --no-cache --virtual .build-deps \
