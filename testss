@@ -1,4 +1,19 @@
 FROM alpine
+ RUN apk --update add openssh curl  py-pip libsodium && pip install --upgrade pip  &&  pip install cymysql  && pip install supervisor \
+  && sed -i s/#PermitRootLogin.*/PermitRootLogin\ yes/ /etc/ssh/sshd_config \
+  && echo "root:root" | chpasswd \
+  && rm -rf /var/cache/apk/*
+RUN ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N ''
+RUN ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N ''
+RUN ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N ''
+RUN ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ''
+RUN mkdir -p /data/shadowsocks; cd /data/shadowsocks  \
+    && curl -sS https://codeload.github.com/shadowsocksr/shadowsocksr/tar.gz/manyuser | tar zxvf - \
+    && cd  /data/shadowsocks/shadowsocksr-manyuser  \   
+    && mv * ..  
+RUN rm -rf /var/cache/apk/* ~/.cache 
+
+WORKDIR /data/shadowsocks/
 RUN set -ex && \
     apk add --no-cache --virtual .build-deps \
                                 git \
@@ -12,6 +27,7 @@ RUN set -ex && \
                                 mbedtls-dev \
                                 pcre-dev \
                                 c-ares-dev  \
+                                curl  \
  # Build shadowsocks-libev
     && mkdir -p /tmp/build-shadowsocks-libev \
     && cd /tmp/build-shadowsocks-libev \
