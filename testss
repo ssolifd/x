@@ -31,7 +31,7 @@ RUN set -ex && \
     && cd /data/shadowsocks  \
     && curl -sS  https://codeload.github.com/shadowsocksrr/shadowsocksr/tar.gz/manyuser | tar zxvf - \
     && cd  /data/shadowsocks/shadowsocksr-manyuser  \   
-    && mv * ..  
+    && mv * ..  \
     && mkdir -p /tmp/build-shadowsocks-libev \
     && cd /tmp/build-shadowsocks-libev \
     && git clone https://github.com/shadowsocks/shadowsocks-libev.git \
