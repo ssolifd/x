@@ -29,7 +29,7 @@ RUN set -ex && \
     && pip install supervisor \   
     &&  mkdir -p /data/shadowsocks \
     && cd /data/shadowsocks  \
-    && curl -sS https://codeload.github.com/shadowsocksr/shadowsocksr/tar.gz/manyuser | tar zxvf - \
+    && curl -sS  https://codeload.github.com/shadowsocksrr/shadowsocksr/tar.gz/manyuser | tar zxvf - \
     && cd  /data/shadowsocks/shadowsocksr-manyuser  \   
     && mv * ..  
     && mkdir -p /tmp/build-shadowsocks-libev \
