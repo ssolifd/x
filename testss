@@ -11,7 +11,7 @@ RUN set -ex && \
                                 libsodium-dev \
                                 mbedtls-dev \
                                 pcre-dev \
-                                c-ares-dev 
+                                c-ares-dev  \
  # Build shadowsocks-libev
     && mkdir -p /tmp/build-shadowsocks-libev \
     && cd /tmp/build-shadowsocks-libev \
