@@ -1,5 +1,5 @@
 FROM alpine
- RUN apk --update add openssh  python libsodium  \
+ RUN apk --update add openssh py-pip python libsodium  \
   && sed -i s/#PermitRootLogin.*/PermitRootLogin\ yes/ /etc/ssh/sshd_config \
   && echo "root:root" | chpasswd \
   && rm -rf /var/cache/apk/*
@@ -23,7 +23,7 @@ RUN set -ex && \
                                 pcre-dev \
                                 c-ares-dev  \
                                 curl  \
-                                py-pip \
+                                
  # Build shadowsocks-libev
     && pip install --upgrade pip    \
     && pip install supervisor \   
