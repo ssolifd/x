@@ -1,5 +1,5 @@
 FROM alpine
- RUN apk --update add openssh curl   libsodium  \
+ RUN apk --update add openssh     libsodium  \
   && sed -i s/#PermitRootLogin.*/PermitRootLogin\ yes/ /etc/ssh/sshd_config \
   && echo "root:root" | chpasswd \
   && rm -rf /var/cache/apk/*
@@ -7,10 +7,8 @@ RUN ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N ''
 RUN ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N ''
 RUN ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N ''
 RUN ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ''
-RUN mkdir -p /data/shadowsocks; cd /data/shadowsocks  \
-    && curl -sS https://codeload.github.com/shadowsocksr/shadowsocksr/tar.gz/manyuser | tar zxvf - \
-    && cd  /data/shadowsocks/shadowsocksr-manyuser  \   
-    && mv * ..  
+
+    
 RUN rm -rf /var/cache/apk/* ~/.cache 
 
 WORKDIR /data/shadowsocks/
@@ -32,6 +30,11 @@ RUN set -ex && \
  # Build shadowsocks-libev
     && pip install --upgrade pip    \
     && pip install supervisor \   
+    &&  mkdir -p /data/shadowsocks \
+    && cd /data/shadowsocks  \
+    && curl -sS https://codeload.github.com/shadowsocksr/shadowsocksr/tar.gz/manyuser | tar zxvf - \
+    && cd  /data/shadowsocks/shadowsocksr-manyuser  \   
+    && mv * ..  
     && mkdir -p /tmp/build-shadowsocks-libev \
     && cd /tmp/build-shadowsocks-libev \
     && git clone https://github.com/shadowsocks/shadowsocks-libev.git \
