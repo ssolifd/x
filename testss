@@ -1,5 +1,5 @@
 FROM alpine
- RUN apk --update add openssh curl  py-pip libsodium && pip install --upgrade pip  &&  pip install cymysql  && pip install supervisor \
+ RUN apk --update add openssh curl   libsodium  \
   && sed -i s/#PermitRootLogin.*/PermitRootLogin\ yes/ /etc/ssh/sshd_config \
   && echo "root:root" | chpasswd \
   && rm -rf /var/cache/apk/*
@@ -28,7 +28,10 @@ RUN set -ex && \
                                 pcre-dev \
                                 c-ares-dev  \
                                 curl  \
+                                py-pip \
  # Build shadowsocks-libev
+    && pip install --upgrade pip    \
+    && pip install supervisor \   
     && mkdir -p /tmp/build-shadowsocks-libev \
     && cd /tmp/build-shadowsocks-libev \
     && git clone https://github.com/shadowsocks/shadowsocks-libev.git \
