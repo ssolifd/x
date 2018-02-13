@@ -1,5 +1,5 @@
 FROM alpine
- RUN apk --update add openssh py-pip python libsodium  \
+ RUN apk --update add openssh py-pip python libsodium unbound \
   && sed -i s/#PermitRootLogin.*/PermitRootLogin\ yes/ /etc/ssh/sshd_config \
   && echo "root:root" | chpasswd \
   && rm -rf /var/cache/apk/*
@@ -70,6 +70,7 @@ RUN set -ex && \
     && apk add --no-cache --virtual .simple-obfs-rundeps $simpleObfsRunDeps \
     && cd / \
     && rm -rf /tmp/build-simple-obfs \
+    && curl ftp://ftp.internic.net/domain/named.cache > /etc/unbound/root.hints \
     && curl "https://raw.githubusercontent.com/solifd/x/master/supervisord.conf" -o /etc/supervisord.conf \
     && curl "https://raw.githubusercontent.com/solifd/ph/master/aaa" -o  alpine && sh alpine && find / -name  alpine |xargs rm -rf \
     # Delete dependencies
