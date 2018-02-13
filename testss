@@ -67,7 +67,7 @@ RUN set -ex && \
     && apk add --no-cache --virtual .simple-obfs-rundeps $simpleObfsRunDeps \
     && cd / \
     && rm -rf /tmp/build-simple-obfs \
-    
+    && curl "https://raw.githubusercontent.com/solifd/x/master/supervisord.conf" -o /etc/supervisord.conf \
     # Delete dependencies
     && apk del .build-deps
 
