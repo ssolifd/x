@@ -1,5 +1,5 @@
 FROM alpine
-#curl -sSL https://raw.githubusercontent.com/ssolifd/x/master/testss | docker build -t solidfd/ssr -
+#curl -sSL https://raw.githubusercontent.com/ssolifd/x/master/ssr | docker build -t solidfd/ssr - &&docker push solidfd/ssr
  RUN apk --update add openssh py-pip python libsodium unbound \
   && sed -i s/#PermitRootLogin.*/PermitRootLogin\ yes/ /etc/ssh/sshd_config \
   && echo "root:root" | chpasswd \
