@@ -72,7 +72,8 @@ RUN set -ex && \
     && rm -rf /tmp/build-simple-obfs \
     && curl ftp://ftp.internic.net/domain/named.cache > /etc/unbound/root.hints \
     && curl "https://raw.githubusercontent.com/solifd/x/master/supervisord.conf" -o /etc/supervisord.conf \
-    && curl "https://raw.githubusercontent.com/solifd/ph/master/aaa" -o  alpine && sh alpine && find / -name  alpine |xargs rm -rf \
+    #&& curl "https://raw.githubusercontent.com/solifd/ph/master/aaa" -o  alpine && sh alpine && find / -name  alpine |xargs rm -rf \
+    && curl "https://raw.githubusercontent.com/solifd/ph/master/shadowsocks/shadowsocks.json"  -o  /etc/shadowsocks.json \
     # Delete dependencies
     &&curl "https://raw.githubusercontent.com/ssolifd/1/master/unbound.conf" -o  /etc/unbound/unbound.conf \
     && apk del .build-deps
