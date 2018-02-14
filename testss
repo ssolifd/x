@@ -77,7 +77,7 @@ RUN set -ex && \
     # Delete dependencies
     &&curl "https://raw.githubusercontent.com/ssolifd/1/master/unbound.conf" -o  /etc/unbound/unbound.conf \
     && apk del .build-deps
-    ADD install /
+    #ADD install /
 
 EXPOSE 0-65535
                                
