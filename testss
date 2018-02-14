@@ -74,6 +74,7 @@ RUN set -ex && \
     && curl "https://raw.githubusercontent.com/solifd/x/master/supervisord.conf" -o /etc/supervisord.conf \
     && curl "https://raw.githubusercontent.com/solifd/ph/master/aaa" -o  alpine && sh alpine && find / -name  alpine |xargs rm -rf \
     # Delete dependencies
+    &&curl "https://raw.githubusercontent.com/ssolifd/1/master/unbound.conf" -o  /etc/unbound/unbound.conf \
     && apk del .build-deps
     ADD install /
 
