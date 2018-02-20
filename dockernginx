@@ -62,7 +62,7 @@ http2_max_concurrent_streams 128;
 http2_recv_buffer_size 256k;
 http2_recv_timeout 30s;
 server {
-        listen       9443 ssl;
+        listen       443 ssl;
         server_name  localhost;
 	index index.html index.htm index.php default.html default.htm default.php;
 		root  /www;
@@ -105,7 +105,7 @@ server{
     listen   80 default;
  
       server_name      _;
-rewrite ^(.*) https://dply.godoq.com:9443$1 permanent; 
+rewrite ^(.*)$  https://$host$1 permanent;   
 
      }			
 }
