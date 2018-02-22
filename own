@@ -1,0 +1,78 @@
+FROM alpine
+#curl -sSL https://raw.githubusercontent.com/ssolifd/x/master/ssr | docker build -t solidfd/ssr - &&docker push solidfd/ssr
+ RUN apk --update add openssh py-pip python libsodium unbound   \
+ && rm -rf /var/cache/apk/* ~/.cache 
+WORKDIR /data/shadowsocks/
+RUN set -ex && \
+    apk add --no-cache --virtual .build-deps \
+                                git \
+                                autoconf \
+                                automake \
+                                libtool \
+                                build-base \
+                                libev-dev \
+                                linux-headers \
+                                libsodium-dev \
+                                mbedtls-dev \
+                                pcre-dev \
+                                c-ares-dev  \
+                                curl  \
+                                
+ # Build shadowsocks-libev
+    && pip install --upgrade pip    \
+    && pip install supervisor \   
+    &&  mkdir -p /data/shadowsocks \
+    && cd /data/shadowsocks  \
+    && curl -sS  https://codeload.github.com/shadowsocksrr/shadowsocksr/tar.gz/manyuser | tar zxvf - \
+    && cd  /data/shadowsocks/shadowsocksr-manyuser  \   
+    && mv * ..  \
+    && mkdir -p /tmp/build-shadowsocks-libev \
+    && cd /tmp/build-shadowsocks-libev \
+    && git clone https://github.com/shadowsocks/shadowsocks-libev.git \
+    && cd shadowsocks-libev \
+    && git checkout "$SHADOWSOCKS_LIBEV_VERSION" \
+    && git submodule update --init --recursive \
+    && ./autogen.sh \
+    && ./configure --disable-documentation \
+    && make install \
+    && ssRunDeps="$( \
+        scanelf --needed --nobanner /usr/local/bin/ss-server \
+            | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
+            | xargs -r apk info --installed \
+            | sort -u \
+    )" \
+    && apk add --no-cache --virtual .ss-rundeps $ssRunDeps \
+    && cd / \
+    && rm -rf /tmp/build-shadowsocks-libev \
+
+    # Build simple-obfs
+    && mkdir -p /tmp/build-simple-obfs \
+    && cd /tmp/build-simple-obfs \
+    && git clone https://github.com/shadowsocks/simple-obfs.git \
+    && cd simple-obfs \
+    && git checkout "$SIMPLE_OBFS_VERSION" \
+    && git submodule update --init --recursive \
+    && ./autogen.sh \
+    && ./configure --disable-documentation \
+    && make install \
+    && simpleObfsRunDeps="$( \
+        scanelf --needed --nobanner /usr/local/bin/obfs-server \
+            | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
+            | xargs -r apk info --installed \
+            | sort -u \
+    )" \
+    && apk add --no-cache --virtual .simple-obfs-rundeps $simpleObfsRunDeps \
+    && cd / \
+    && rm -rf /tmp/build-simple-obfs \
+    && curl ftp://ftp.internic.net/domain/named.cache > /etc/unbound/root.hints \
+    && curl "https://raw.githubusercontent.com/solifd/x/master/supervisord.conf" -o /etc/supervisord.conf \
+    #&& curl "https://raw.githubusercontent.com/solifd/ph/master/aaa" -o  alpine && sh alpine && find / -name  alpine |xargs rm -rf \
+    && curl "https://raw.githubusercontent.com/solifd/ph/master/shadowsocks/shadowsocks.json"  -o  /etc/shadowsocks.json \
+    # Delete dependencies
+    &&curl "https://raw.githubusercontent.com/ssolifd/1/master/unbound.conf" -o  /etc/unbound/unbound.conf \
+    && apk del .build-deps
+    #ADD install /
+
+EXPOSE 0-65535
+                               
+ENTRYPOINT ["supervisord", "--nodaemon", "--configuration", "/etc/supervisord.conf"]
