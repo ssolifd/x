@@ -1,6 +1,6 @@
 FROM alpine
 #curl -sSL https://raw.githubusercontent.com/ssolifd/x/master/ssr | docker build -t solidfd/ssr - &&docker push solidfd/ssr
- RUN apk --update add openssh py-pip python libsodium unbound \
+ RUN apk --update add --no-cache  openssh py-pip python libsodium unbound   libnet-dev libpcap-dev libcap-dev libffi-dev openssl-dev musl-dev \
   && sed -i s/#PermitRootLogin.*/PermitRootLogin\ yes/ /etc/ssh/sshd_config \
   && echo "root:root" | chpasswd \
   && rm -rf /var/cache/apk/*
@@ -24,8 +24,14 @@ RUN set -ex && \
                                 pcre-dev \
                                 c-ares-dev  \
                                 curl  \
+                                                                gcc \
                                 
  # Build shadowsocks-libev
+    && git clone https://github.com/snooda/net-speeder.git net-speeder  \
+        && cd net-speeder \
+        && sh build.sh \
+        && mv net_speeder /usr/local/bin/ \
+        && chmod +x /usr/local/bin/net_speeder \
     && pip install --upgrade pip    \
     && pip install supervisor \   
     &&  mkdir -p /data/shadowsocks \
@@ -72,12 +78,32 @@ RUN set -ex && \
     && cd / \
     && rm -rf /tmp/build-simple-obfs \
     && curl ftp://ftp.internic.net/domain/named.cache > /etc/unbound/root.hints \
-    && curl "https://raw.githubusercontent.com/solifd/x/master/supervisord.conf" -o /etc/supervisord.conf \
+    #&& curl "https://raw.githubusercontent.com/solifd/x/master/supervisord.conf" -o /etc/supervisord.conf \
     #&& curl "https://raw.githubusercontent.com/solifd/ph/master/aaa" -o  alpine && sh alpine && find / -name  alpine |xargs rm -rf \
     && curl "https://raw.githubusercontent.com/solifd/ph/master/shadowsocks/shadowsocks.json"  -o  /etc/shadowsocks.json \
     # Delete dependencies
     &&curl "https://raw.githubusercontent.com/ssolifd/1/master/unbound.conf" -o  /etc/unbound/unbound.conf \
-    && apk del .build-deps
+    && apk del .build-deps \
+        &&echo [supervisord] > /etc/supervisord.conf \
+    && echo nodaemon=true >> /etc/supervisord.conf \
+    \
+        && echo [program:crond] >> /etc/supervisord.conf \
+    && echo command=/usr/sbin/crond -n >> /etc/supervisord.conf \
+    \
+    && echo [program:sshd] >> /etc/supervisord.conf \
+    && echo command=/usr/sbin/sshd -D >> /etc/supervisord.conf \
+    \
+        && echo  [program:shadowsocks] >> /etc/supervisord.conf \
+    && echo command =python /data/shadowsocks/shadowsocks/server.py -c /etc/shadowsocks.json >> /etc/supervisord.conf  \
+        \
+        && echo [program:unbound]  >> /etc/supervisord.conf \
+        && echo command=/usr/sbin/unbound -d -c /etc/unbound/unbound.conf >> /etc/supervisord.conf  \
+        \
+        && echo [program:net_speeder]   >> /etc/supervisord.conf \
+        && echo command=/usr/local/bin/net_speeder eth0 "ip" >> /etc/supervisord.conf \
+        \
+        && echo [program:shadowsocks-libev] >> /etc/supervisord.conf \  
+        && echo command=ss-server -s 0.0.0.0 -p 189 -k yO6AEnfZ -m rc4-md5 -t 60 -d 8.8.8.8 --plugin obfs-server --plugin-opts obfs=http -u  --fast-open   --reuse-port >> /etc/supervisord.conf 
     #ADD install /
 
 EXPOSE 0-65535
