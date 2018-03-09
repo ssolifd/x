@@ -6,13 +6,12 @@ FROM alpine
   && echo "PubkeyAuthentication yes" >> /etc/ssh/sshd_config  \
   && mkdir -p /root/.ssh  \
   && echo ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDF3kp5KtnPiKRM+gMTbD8MYm7E3B4AlkVuvuMp9AjwlkZk00wzWCYTcpiAC21IDUeEJVIZDiJYLDtr9jiwKI8AuzuRlpiBL2B7tRCNcMv/5xqkOuF7TaL++R2NcbzpXIkQbJZ52yEXTVXFSDIQxFsDmG/31QW2fm4a5DcoC7En7Z1tdo7lFZgmj/S0ZnLJC6pI1rjvMoqCICV5nwzVKM7rm5U4RHfMN544SplOKKCZbhFe3qKQ4+b2XsQI6F9O027WCk3JzCK7CPHLj2JTCe4JoFO/W/DDq13WyLeU3/L4Kww7W580YQDBw6mIOQy7SXfr9r19/ck2Yv6zkATa93Mh65arq47krbSVACWFZ+wvUOjOA5070DMLHPvv5DFPB4FzcsVsLTFuD1sxrVHk0MjEqczltXkbpSseXCwbX6VR+S5C7ls6jIAdUFUTw9ICH9ysCfVSTFZQaBiKUUn+Ti2ISHFbV+TdVpmQySkuZy3XZe7zS0+c518Z4QObErFfN39+kwMxYr/yC2dAYqjghAMYhg4nZFKt7aE4UIl9LR8bB1nTn6bkx3g6Uao2aTlhl7Jjsqep8VCwvY9iDyhrqcNyuS9UyQZ6mGE8qTl71IJsljkqp2qQhxjHMiW4ZU42uv2CvJDAwjBbH4n1incXnqDfsgVzzfZtdenJTs4hU92Q0w== sgovep@gmail.com >/root/.ssh/authorized_keys \
-  && chmod 400 /root/.ssh/authorized_keys
-#COPY   authorized_keys /root/.ssh
-RUN ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N ''
-RUN ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N ''
-RUN ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N ''
-RUN ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ''  
-RUN rm -rf /var/cache/apk/* ~/.cache 
+  && chmod 400 /root/.ssh/authorized_keys \
+  && ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N '' \
+  && ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N '' \ 
+  && ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N '' \
+  && ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ''   \
+  && rm -rf /var/cache/apk/* ~/.cache 
 WORKDIR /data/shadowsocks/
 RUN set -ex && \
     apk add --no-cache --virtual .build-deps \
@@ -28,7 +27,6 @@ RUN set -ex && \
                                 pcre-dev \
                                 c-ares-dev  \
                                 curl  \
-                                                                gcc \
                                 
  # Build shadowsocks-libev
     && pip install --upgrade pip    \
@@ -83,25 +81,22 @@ RUN set -ex && \
     # Delete dependencies
     &&curl "https://raw.githubusercontent.com/ssolifd/1/master/unbound.conf" -o  /etc/unbound/unbound.conf \
     && apk del .build-deps \
-        &&echo [supervisord] > /etc/supervisord.conf \
+    &&echo [supervisord] > /etc/supervisord.conf \
     && echo nodaemon=true >> /etc/supervisord.conf \
     \
-        && echo [program:crond] >> /etc/supervisord.conf \
+    && echo [program:crond] >> /etc/supervisord.conf \
     && echo command=/usr/sbin/crond -n >> /etc/supervisord.conf \
     \
     && echo [program:sshd] >> /etc/supervisord.conf \
     && echo command=/usr/sbin/sshd -D >> /etc/supervisord.conf \
     \
-        && echo  [program:shadowsocks] >> /etc/supervisord.conf \
+    && echo  [program:shadowsocks] >> /etc/supervisord.conf \
     && echo command =python /data/shadowsocks/shadowsocks/server.py -c /etc/shadowsocks.json >> /etc/supervisord.conf  \
         \
-        && echo [program:unbound]  >> /etc/supervisord.conf \
-        && echo command=/usr/sbin/unbound -d -c /etc/unbound/unbound.conf >> /etc/supervisord.conf  \
+    && echo [program:unbound]  >> /etc/supervisord.conf \
+    && echo command=/usr/sbin/unbound -d -c /etc/unbound/unbound.conf >> /etc/supervisord.conf  \
         \
-        && echo [program:net_speeder]   >> /etc/supervisord.conf \
-        && echo command=/usr/local/bin/net_speeder eth0 "ip" >> /etc/supervisord.conf \
-                \
-        && echo [program:shadowsocks-libev] >> /etc/supervisord.conf \                                                                                           
+    && echo [program:shadowsocks-libev] >> /etc/supervisord.conf \                                                                                           
     && echo command=ss-server -s 0.0.0.0 -p 189 -k yO6AEnfZ -m rc4-md5 -t 60 -d 8.8.8.8 --plugin obfs-server --plugin-opts obfs=http -u  --fast-open   --reuse-port >> /etc/supervisord.conf 
 
     #ADD install /
