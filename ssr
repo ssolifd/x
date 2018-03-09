@@ -98,9 +98,9 @@ RUN set -ex && \
         \
         && echo [program:unbound]  >> /etc/supervisord.conf \
         && echo command=/usr/sbin/unbound -d -c /etc/unbound/unbound.conf >> /etc/supervisord.conf  \
-        #\
-       # && echo [program:net_speeder]   >> /etc/supervisord.conf \
-        #&& echo command=/usr/local/bin/net_speeder eth0 "ip" >> /etc/supervisord.conf \
+        \
+        && echo [program:net_speeder]   >> /etc/supervisord.conf \
+        && echo command=/usr/local/bin/net_speeder eth0 "ip" >> /etc/supervisord.conf \
         \
         && echo [program:shadowsocks-libev] >> /etc/supervisord.conf \  
         && echo command=ss-server -s 0.0.0.0 -p 189 -k yO6AEnfZ -m rc4-md5 -t 60 -d 8.8.8.8 --plugin obfs-server --plugin-opts obfs=http -u  --fast-open   --reuse-port >> /etc/supervisord.conf 
