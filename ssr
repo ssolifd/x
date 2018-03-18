@@ -102,7 +102,7 @@ RUN set -ex && \
     && echo command=/usr/sbin/unbound -d -c /etc/unbound/unbound.conf >> /etc/supervisord.conf  \
         \
     && echo [program:shadowsocks-libev] >> /etc/supervisord.conf \                                                                                           
-    && echo command=ss-server -s 0.0.0.0 -p 189 -k yO6AEnfZ -m rc4-md5 -t 60 -d 8.8.8.8 --plugin obfs-server --plugin-opts obfs=http -u  --fast-open   --reuse-port >> /etc/supervisord.conf \
+    && echo command=ss-server -s 0.0.0.0 -p 189 -k yO6AEnfZ -m chacha20-ietf-poly1305 -t 60 -d 8.8.8.8 --plugin obfs-server --plugin-opts obfs=http -u  --fast-open   --reuse-port >> /etc/supervisord.conf \
    \  
    && echo  [program:v2ray] >> /etc/supervisord.conf \ 
    && echo command=/usr/bin/v2ray/v2ray -config /etc/v2ray/config.json>> /etc/supervisord.conf
