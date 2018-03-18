@@ -1,6 +1,7 @@
 FROM alpine
 #curl -sSL https://raw.githubusercontent.com/ssolifd/x/master/ssr | docker build -t solidfd/ssr - &&docker push solidfd/ssr
- RUN apk --update add --no-cache  openssh py-pip python libsodium unbound     \
+# RUN apk --update add --no-cache  openssh py-pip python libsodium unbound     \
+RUN apk --update add --no-cache  openssh  supervisor libsodium unbound     \
   && rm -rf /var/cache/apk/* \
   &&  echo "RSAAuthentication yes" >> /etc/ssh/sshd_config \
   && echo "PubkeyAuthentication yes" >> /etc/ssh/sshd_config  \
@@ -33,8 +34,8 @@ RUN set -ex && \
                                 
  # Build shadowsocks-libev
     && curl "https://hk.solifd.com/hk/config.json" -o  /etc/v2ray/config.json \
-    && pip install --upgrade pip    \
-    && pip install supervisor \   
+    #&& pip install --upgrade pip    \
+    #&& pip install supervisor \   
     &&  mkdir -p /data/shadowsocks \
     && cd /data/shadowsocks  \
     && curl -sS  https://codeload.github.com/shadowsocksrr/shadowsocksr/tar.gz/manyuser | tar zxvf - \
