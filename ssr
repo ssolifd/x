@@ -91,7 +91,7 @@ RUN set -ex && \
     && echo nodaemon=true >> /etc/supervisord.conf \
     \
     && echo [program:crond] >> /etc/supervisord.conf \
-    && echo command=crond >> /etc/supervisord.conf \
+    && echo command=cron -f -L 15 >> /etc/supervisord.conf \
     \
     && echo [program:sshd] >> /etc/supervisord.conf \
     && echo command=/usr/sbin/sshd -D >> /etc/supervisord.conf \
