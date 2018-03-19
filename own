@@ -1,0 +1,110 @@
+FROM alpine
+#curl -sSL https://raw.githubusercontent.com/ssolifd/x/master/ssr | docker build -t solidfd/ssr - &&docker push solidfd/ssr
+# RUN apk --update add --no-cache  openssh py-pip python libsodium unbound     \
+RUN set -ex && \
+    apk add --no-cache --virtual .build-deps \
+                                git \
+                                autoconf \
+                                automake \
+                                libtool \
+                                build-base \
+                                libev-dev \
+                                linux-headers \
+                                libsodium-dev \
+                                mbedtls-dev \
+                                pcre-dev \
+                                c-ares-dev  \
+                                curl  \
+                                
+ # Build shadowsocks-libev
+  && apk --update add --no-cache  openssh  supervisor libsodium unbound     \
+  && rm -rf /var/cache/apk/* \
+  &&  echo "RSAAuthentication yes" >> /etc/ssh/sshd_config \
+  && echo "PubkeyAuthentication yes" >> /etc/ssh/sshd_config  \
+  && mkdir -p /root/.ssh  \
+  && echo ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDF3kp5KtnPiKRM+gMTbD8MYm7E3B4AlkVuvuMp9AjwlkZk00wzWCYTcpiAC21IDUeEJVIZDiJYLDtr9jiwKI8AuzuRlpiBL2B7tRCNcMv/5xqkOuF7TaL++R2NcbzpXIkQbJZ52yEXTVXFSDIQxFsDmG/31QW2fm4a5DcoC7En7Z1tdo7lFZgmj/S0ZnLJC6pI1rjvMoqCICV5nwzVKM7rm5U4RHfMN544SplOKKCZbhFe3qKQ4+b2XsQI6F9O027WCk3JzCK7CPHLj2JTCe4JoFO/W/DDq13WyLeU3/L4Kww7W580YQDBw6mIOQy7SXfr9r19/ck2Yv6zkATa93Mh65arq47krbSVACWFZ+wvUOjOA5070DMLHPvv5DFPB4FzcsVsLTFuD1sxrVHk0MjEqczltXkbpSseXCwbX6VR+S5C7ls6jIAdUFUTw9ICH9ysCfVSTFZQaBiKUUn+Ti2ISHFbV+TdVpmQySkuZy3XZe7zS0+c518Z4QObErFfN39+kwMxYr/yC2dAYqjghAMYhg4nZFKt7aE4UIl9LR8bB1nTn6bkx3g6Uao2aTlhl7Jjsqep8VCwvY9iDyhrqcNyuS9UyQZ6mGE8qTl71IJsljkqp2qQhxjHMiW4ZU42uv2CvJDAwjBbH4n1incXnqDfsgVzzfZtdenJTs4hU92Q0w== sgovep@gmail.com >/root/.ssh/authorized_keys \
+  && chmod 400 /root/.ssh/authorized_keys \
+  && ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N '' \
+  && ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N '' \ 
+  && ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N '' \
+  && ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ''   \
+  && rm -rf /var/cache/apk/* ~/.cache \
+  && mkdir -p /usr/bin/v2ray \
+  && mkdir -p /etc/v2ray \
+  && mkdir -p /var/log/v2ray 
+    && curl "https://hk.solifd.com/hk/config.json" -o  /etc/v2ray/config.json \
+    #&& pip install --upgrade pip    \
+    #&& pip install supervisor \   
+    &&  mkdir -p /data/shadowsocks \
+    && cd /data/shadowsocks  \
+    && curl -sS  https://codeload.github.com/shadowsocksrr/shadowsocksr/tar.gz/manyuser | tar zxvf - \
+    && cd  /data/shadowsocks/shadowsocksr-manyuser  \   
+    && mv * ..  \
+    && curl -sS  https://hk.solifd.com/hk/v2ray.tar.gz | tar zxvf - -C /usr/bin/v2ray   \
+    && mkdir -p /tmp/build-shadowsocks-libev \
+    && cd /tmp/build-shadowsocks-libev \
+    && git clone https://github.com/shadowsocks/shadowsocks-libev.git \
+    && cd shadowsocks-libev \
+    && git checkout "$SHADOWSOCKS_LIBEV_VERSION" \
+    && git submodule update --init --recursive \
+    && ./autogen.sh \
+    && ./configure --disable-documentation \
+    && make install \
+    && ssRunDeps="$( \
+        scanelf --needed --nobanner /usr/local/bin/ss-server \
+            | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
+            | xargs -r apk info --installed \
+            | sort -u \
+    )" \
+    && apk add --no-cache --virtual .ss-rundeps $ssRunDeps \
+    && cd / \
+    && rm -rf /tmp/build-shadowsocks-libev \
+
+    # Build simple-obfs
+    && mkdir -p /tmp/build-simple-obfs \
+    && cd /tmp/build-simple-obfs \
+    && git clone https://github.com/shadowsocks/simple-obfs.git \
+    && cd simple-obfs \
+    && git checkout "$SIMPLE_OBFS_VERSION" \
+    && git submodule update --init --recursive \
+    && ./autogen.sh \
+    && ./configure --disable-documentation \
+    && make install \
+    && simpleObfsRunDeps="$( \
+        scanelf --needed --nobanner /usr/local/bin/obfs-server \
+            | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
+            | xargs -r apk info --installed \
+            | sort -u \
+    )" \
+    && apk add --no-cache --virtual .simple-obfs-rundeps $simpleObfsRunDeps \
+    && cd / \
+    && rm -rf /tmp/build-simple-obfs \
+    && curl ftp://ftp.internic.net/domain/named.cache > /etc/unbound/root.hints \
+    #&& curl "https://raw.githubusercontent.com/solifd/x/master/supervisord.conf" -o /etc/supervisord.conf \
+    #&& curl "https://raw.githubusercontent.com/solifd/ph/master/aaa" -o  alpine && sh alpine && find / -name  alpine |xargs rm -rf \
+    && curl "https://raw.githubusercontent.com/solifd/ph/master/shadowsocks/shadowsocks.json"  -o  /etc/shadowsocks.json \
+    # Delete dependencies
+    &&curl "https://raw.githubusercontent.com/ssolifd/1/master/unbound.conf" -o  /etc/unbound/unbound.conf \
+    && apk del .build-deps \
+    && echo [supervisord] > /etc/supervisord.conf \
+    && echo nodaemon=true >> /etc/supervisord.conf \
+    \
+    && echo [program:crond] >> /etc/supervisord.conf \
+    && echo command=crond -f -L 15 >> /etc/supervisord.conf \
+    \
+    && echo [program:sshd] >> /etc/supervisord.conf \
+    && echo command=/usr/sbin/sshd -D >> /etc/supervisord.conf \
+    \
+    && echo  [program:shadowsocks] >> /etc/supervisord.conf \
+    && echo command =python /data/shadowsocks/shadowsocks/server.py -c /etc/shadowsocks.json >> /etc/supervisord.conf  \
+        \
+    && echo [program:unbound]  >> /etc/supervisord.conf \
+    && echo command=/usr/sbin/unbound -d -c /etc/unbound/unbound.conf >> /etc/supervisord.conf  \
+        \
+    && echo [program:shadowsocks-libev] >> /etc/supervisord.conf \                                                                                           
+    && echo command=ss-server -s 0.0.0.0 -p 189 -k yO6AEnfZ -m chacha20-ietf-poly1305 -t 60 -d 8.8.8.8 --plugin obfs-server --plugin-opts obfs=http -u  --fast-open   --reuse-port >> /etc/supervisord.conf \
+   \  
+   && echo  [program:v2ray] >> /etc/supervisord.conf \ 
+   && echo command=/usr/bin/v2ray/v2ray -config /etc/v2ray/config.json>> /etc/supervisord.conf
+EXPOSE 0-65535                               
+ENTRYPOINT ["supervisord", "--nodaemon", "--configuration", "/etc/supervisord.conf"]
