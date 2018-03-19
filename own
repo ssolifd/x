@@ -31,7 +31,7 @@ RUN set -ex && \
   && rm -rf /var/cache/apk/* ~/.cache \
   && mkdir -p /usr/bin/v2ray \
   && mkdir -p /etc/v2ray \
-  && mkdir -p /var/log/v2ray 
+  && mkdir -p /var/log/v2ray \
     && curl "https://hk.solifd.com/hk/config.json" -o  /etc/v2ray/config.json \
     #&& pip install --upgrade pip    \
     #&& pip install supervisor \   
