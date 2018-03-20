@@ -82,6 +82,7 @@ echo "Please wait while we gather and install blocking lists..."
 #curl -s https://raw.githubusercontent.com/ssolifd/1/master/domain | grep -v "#" > /tmp/blackhole
 
 curl -s https://raw.githubusercontent.com/ssolifd/x/master/ad > /tmp/blackhole
+sed -i /#/d  /tmp/blackhole
 cat /tmp/blackhole | uniq -u > /tmp/blackholeuniq
 cat /tmp/blackholeuniq | grep -v "localhost" | grep -v "local" | grep -v "127.0.0.1" | grep -v "::1" > /tmp/blackholedomains
 sed -i 's/^ *//; s/ *$//; /^$/d; /^\s*$/d' /tmp/blackholedomains
