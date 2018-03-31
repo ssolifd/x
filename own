@@ -1,5 +1,5 @@
 FROM alpine
-#curl -sSL https://raw.githubusercontent.com/ssolifd/x/master/ssr | docker build -t solidfd/ssr - &&docker push solidfd/ssr
+#curl -sSL https://raw.githubusercontent.com/ssolifd/x/master/own | docker build -t solidfd/own - &&docker push solidfd/own
 # RUN apk --update add --no-cache  openssh py-pip python libsodium unbound  tzdata   \
 RUN apk --update add --no-cache  openssh  supervisor libsodium unbound     \
   && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
