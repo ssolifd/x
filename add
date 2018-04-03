@@ -40,7 +40,7 @@ curl -s https://s3.amazonaws.com/lists.disconnect.me/simple_ad.txt | grep -v "#"
 curl -s https://s3.amazonaws.com/lists.disconnect.me/simple_malvertising.txt | grep -v "#" >> /tmp/blackhole
 curl -s https://s3.amazonaws.com/lists.disconnect.me/simple_tracking.txt | grep -v "#" >> /tmp/blackhole
 curl -s https://s3.amazonaws.com/lists.disconnect.me/simple_malware.txt | grep -v "#" >> /tmp/blackhole
-#curl -s https://raw.githubusercontent.com/ssolifd/1/master/hosts | grep -v "#" >> /tmp/blackhole
+curl -s https://raw.githubusercontent.com/ssolifd/1/master/hosts | grep -v "#" >> /tmp/blackhole
 # Sanatize output to only domains in /tmp/blackholedomains
 cat /tmp/blackhole | uniq -u > /tmp/blackholeuniq
 cat /tmp/blackholeuniq | grep -v "localhost" | grep -v "local" | grep -v "127.0.0.1" | grep -v "::1" > /tmp/blackholedomains
