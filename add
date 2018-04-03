@@ -11,7 +11,7 @@ fi
 \cp -f adblock.sh /opt/adblock.sh
 
 # IP address to send traffic
-blackHoleDNS="0.0.0.0"
+blackHoleDNS="127.0.0.1"
 blackHoleDNS6="::"
 
 # Location of configuration file
@@ -93,7 +93,7 @@ for a in `cat /tmp/blackholedomains`; do
                 echo 'local-zone: "'$a'"  redirect' >> /tmp/blackholeconfig
 done
 for a in `cat /tmp/blackholedomains`; do
-                echo 'local-data: "'$a' 86400 IN A 0.0.0.0"  ' >> /tmp/blackholeconfig
+                echo 'local-data: "'$a' 86400 IN A 127.0.0.1"  ' >> /tmp/blackholeconfig
 done
 for a in `cat /tmp/blackholedomains`; do
 sed -i /$a/d /etc/unbound/local.d/adaway.conf
