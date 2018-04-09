@@ -175,7 +175,52 @@ EOF
         echo "</tls-auth>" >> ~/ml.ovpn
 
 }
+function op {
+rm -rf /etc/openvpn/client-common.txt
+IP=$(curl -s ipv4.icanhazip.com)
+cat > /etc/openvpn/client-common.txt<<-EOF
+client
+dev tun
+proto tcp
+sndbuf 0
+rcvbuf 0
+remote   $IP 443 tcp
+keepalive       10 60  
+resolv-retry infinite
+nobind
+persist-key
+persist-tun
+remote-cert-tls server
+cipher AES-128-CBC
+comp-lzo
+<http-proxy-user-pass>
+solifd
+solifd.com
+</http-proxy-user-pass>
+setenv opt block-outside-dns
+key-direction 1
+verb 3
+EOF
+ 
+
+# Generates the custom ml.ovpn
+        yes |cp /etc/openvpn/client-common.txt ~/ml.ovpn
+        echo "<ca>" >> ~/ml.ovpn
+        cat /etc/openvpn/easy-rsa/pki/ca.crt >> ~/ml.ovpn
+        echo "</ca>" >> ~/ml.ovpn
+        echo "<cert>" >> ~/ml.ovpn
+        cat /etc/openvpn/easy-rsa/pki/issued/client.crt >> ~/ml.ovpn
+        echo "</cert>" >> ~/ml.ovpn
+        echo "<key>" >> ~/ml.ovpn
+        cat /etc/openvpn/easy-rsa/pki/private/client.key >> ~/ml.ovpn
+        echo "</key>" >> ~/ml.ovpn
+        echo "<tls-auth>" >> ~/ml.ovpn
+        cat /etc/openvpn/ta.key >> ~/ml.ovpn
+        echo "</tls-auth>" >> ~/ml.ovpn
+
+}
 ml
+op
 systemctl start openvpn@server.service
 systemctl -f enable openvpn@server.service
 systemctl status openvpn@server.service
@@ -189,6 +234,7 @@ iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE
 sed -i "1 a\iptables -I FORWARD -s 10.8.0.0/24 -j ACCEPT" $RCLOCAL
 sed -i "1 a\iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT" $RCLOCAL
 iptables-save > /etc/sysconfig/iptables 
+function squid {
 yum -y install httpd-tools squid
 rm -rf /etc/squid/squid.conf
 echo "auth_param basic program /usr/lib64/squid/basic_ncsa_auth /etc/squid/squid_passwd
@@ -223,3 +269,4 @@ systemctl restart squid
 systemctl start squid 
 systemctl enable squid
 systemctl status squid
+}
