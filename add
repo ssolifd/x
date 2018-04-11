@@ -59,28 +59,8 @@ done
 # Remove carraige return and output configuration file
 tr -d '\r' < /tmp/blackholeconfig > $configurationFile
 
-
-# Cleanup
-rm -f /tmp/blackhole
-rm -f /tmp/blackholeuniq
-rm -f /tmp/blackholeconfig
-
-# Confirm completion
-echo "Installed blocklist and set to update daily"
-
-# Clean up for refresh
-rm -f /tmp/blackhole
-rm -f /tmp/blackholedomains
-rm -f /tmp/blackholeuniq
-rm -f /tmp/blackholeconfig
-touch /tmp/blackhole
-
-# Notice for user
+rm -rf /tmp/blackholeconfig
 echo "Please wait while we gather and install blocking lists..."
-
-
-#curl -s https://raw.githubusercontent.com/ssolifd/1/master/domain | grep -v "#" > /tmp/blackhole
-
 curl -s https://raw.githubusercontent.com/ssolifd/x/master/ad > /tmp/blackhole
 sed -i /#/d  /tmp/blackhole
 cat /tmp/blackhole | uniq -u > /tmp/blackholeuniq
@@ -110,5 +90,6 @@ rm -f /tmp/blackholeconfig
 
 # Confirm completion
 echo "Installed blocklist and set to update daily"
-
-
+cd 
+docker-compose down
+docker-compose up -d
