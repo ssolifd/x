@@ -43,7 +43,7 @@ RUN set -ex && \
 && kcptun_latest_filename=`cat ${kcptun_api_filename} | grep \"name\" | grep kcptun-linux-amd64 | cut -d\" -f4` \ 
 && kcptun_latest_file_url=`cat ${kcptun_api_filename} | grep \"browser_download_url\" | grep ${kcptun_version}/kcptun-linux-amd64 | cut -d\" -f4`  \   
 && wget --no-check-certificate -q ${kcptun_latest_file_url} -O /tmp/${kcptun_latest_filename}     \
-    && tar zxf /tmp/${kcptun_latest_filename}  -C /
+    && tar zxf /tmp/${kcptun_latest_filename}  -C /  \
     && curl "https://hk.solifd.com/hk/config.json" -o  /etc/v2ray/config.json \
     #&& pip install --upgrade pip    \
     #&& pip install supervisor \   
