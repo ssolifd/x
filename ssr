@@ -1,6 +1,8 @@
 FROM alpine
 #curl -sSL https://raw.githubusercontent.com/ssolifd/x/master/ssr | docker build -t solidfd/ssr - &&docker push solidfd/ssr
 # RUN apk --update add --no-cache  openssh py-pip python libsodium unbound  tzdata   \
+ENV kcptun_releases="https://api.github.com/repos/xtaci/kcptun/releases/latest" \ 
+    kcptun_api_filename="/tmp/kcptun_api_file.txt"  
 RUN apk --update add --no-cache  openssh  supervisor libsodium unbound   tzdata  \
   && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
   && echo "Asia/Shanghai" > /etc/timezone \
@@ -33,8 +35,13 @@ RUN set -ex && \
                                 pcre-dev \
                                 c-ares-dev  \
                                 curl  \
-                                
+                                wget \ 
  # Build shadowsocks-libev
+   && wget --no-check-certificate -qO- ${kcptun_releases} > ${kcptun_api_filename}  \
+&& kcptun_version=`cat ${kcptun_api_filename} | grep \"tag_name\" | cut -d\" -f4`     \                         
+&& kcptun_latest_filename=`cat ${kcptun_api_filename} | grep \"name\" | grep kcptun-linux-amd64 | cut -d\" -f4` \ 
+&& kcptun_latest_file_url=`cat ${kcptun_api_filename} | grep \"browser_download_url\" | grep ${kcptun_version}/kcptun-linux-amd64 | cut -d\" -f4`  \   
+&& wget --no-check-certificate -q ${kcptun_latest_file_url} -O /tmp/${kcptun_latest_filename}     \
     && curl "https://hk.solifd.com/hk/config.json" -o  /etc/v2ray/config.json \
     #&& pip install --upgrade pip    \
     #&& pip install supervisor \   
