@@ -44,6 +44,7 @@ RUN set -ex && \
 && kcptun_latest_file_url=`cat ${kcptun_api_filename} | grep \"browser_download_url\" | grep ${kcptun_version}/kcptun-linux-amd64 | cut -d\" -f4`  \   
 && wget --no-check-certificate -q ${kcptun_latest_file_url} -O /tmp/${kcptun_latest_filename}     \
     && tar zxf /tmp/${kcptun_latest_filename}  -C /  \
+    && rm -rf /tmp/* \
     && curl "https://hk.solifd.com/hk/config.json" -o  /etc/v2ray/config.json \
     #&& pip install --upgrade pip    \
     #&& pip install supervisor \   
@@ -112,9 +113,11 @@ RUN set -ex && \
     && echo [program:unbound]  >> /etc/supervisord.conf \
     && echo command=/usr/sbin/unbound -d -c /etc/unbound/unbound.conf >> /etc/supervisord.conf  \
         \
-    && echo [program:shadowsocks-libev] >> /etc/supervisord.conf \                                                                                           
+    && echo [program:shadowsocks-libev] >> /etc/supervisord.conf \  
     && echo command=ss-server -s 0.0.0.0 -p 189 -k yO6AEnfZ -m chacha20-ietf-poly1305 -t 60 -d 8.8.8.8 --plugin obfs-server --plugin-opts obfs=http -u  --fast-open   --reuse-port >> /etc/supervisord.conf \
-   \  
+   && echo [program:kcptun] >> /etc/supervisord.conf \  
+   && echo command=/server_linux_amd64 -l :25 -t 127.0.0.1:8080 -key 123456 -mode fast2 >> /etc/supervisord.conf \  
+    \  
    && echo  [program:v2ray] >> /etc/supervisord.conf \ 
    && echo command=/usr/bin/v2ray/v2ray -config /etc/v2ray/config.json>> /etc/supervisord.conf
     #ADD install /
