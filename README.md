@@ -77,7 +77,4 @@ direct = +forward-override{forward .}
 
 更多 privoxy 用法请参考：[privoxy - 用户手册](https://www.privoxy.org/user-manual/)；
 
-## 关于
 
-- 2018-01-27 09:18:34 CST
-- Otokaze（zfl9.com@gmail.com）
