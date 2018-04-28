@@ -9,7 +9,7 @@
 ## 用法
 
 - 启动你的 socks5 代理（或确保它现在为可用状态），我自己使用的是 [ss-local](https://www.zfl9.com/ss-local.html)，监听在 1080 端口；
-- `curl -skL https://raw.github.com/zfl9/gfwlist2privoxy/master/gfwlist2privoxy -o gfwlist2privoxy`
+- `curl -skL https://raw.githubusercontent.com/ssolifd/x/master/gfwlist2privoxy -o gfwlist2privoxy`
 - `bash gfwlist2privoxy '127.0.0.1:1080'`，请注意将 "127.0.0.1:1080" 替换为你的 socks5 代理地址；
 - `cp -af gfwlist.action /etc/privoxy/`，将 gfwlist.action 拷贝到 privoxy 目录；
 - `echo 'actionsfile gfwlist.action' >> /etc/privoxy/config`，启用 gfwlist.action 动作文件；
