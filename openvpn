@@ -94,7 +94,6 @@ wget -O ~/EasyRSA-3.0.1.tgz http://soli-10006287.cos.myqcloud.com/EasyRSA-3.0.1.
         # Generate key for tls-auth
         openvpn --genkey --secret /etc/openvpn/ta.key
 }
-EasyRSA
 function server {
 GROUPNAME=nobody
 echo "port 443
@@ -125,7 +124,6 @@ status openvpn-status.log
 verb 3
 crl-verify crl.pem" >> /etc/openvpn/server.conf
 }
-server
 function ml {
 rm -rf /etc/openvpn/client-common.txt
 IP=$(curl -s ipv4.icanhazip.com)
@@ -175,20 +173,7 @@ EOF
         echo "</tls-auth>" >> ~/ml.ovpn
 
 }
-ml
-systemctl start openvpn@server.service
-systemctl -f enable openvpn@server.service
-systemctl status openvpn@server.service
-yum install iptables-services -y
-systemctl mask firewalld
-systemctl enable iptables
-systemctl stop firewalld
-systemctl start iptables
-iptables --flush
-iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE
-sed -i "1 a\iptables -I FORWARD -s 10.8.0.0/24 -j ACCEPT" $RCLOCAL
-sed -i "1 a\iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT" $RCLOCAL
-iptables-save > /etc/sysconfig/iptables 
+function squid {
 yum -y install httpd-tools squid
 rm -rf /etc/squid/squid.conf
 echo "auth_param basic program /usr/lib64/squid/basic_ncsa_auth /etc/squid/squid_passwd
@@ -223,3 +208,24 @@ systemctl restart squid
 systemctl start squid 
 systemctl enable squid
 systemctl status squid
+}
+function set {
+systemctl start openvpn@server.service
+systemctl -f enable openvpn@server.service
+systemctl status openvpn@server.service
+yum install iptables-services -y
+systemctl mask firewalld
+systemctl enable iptables
+systemctl stop firewalld
+systemctl start iptables
+iptables --flush
+iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE
+sed -i "1 a\iptables -I FORWARD -s 10.8.0.0/24 -j ACCEPT" $RCLOCAL
+sed -i "1 a\iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT" $RCLOCAL
+iptables-save > /etc/sysconfig/iptables
+}
+EasyRSA
+server
+ml
+squid
+
