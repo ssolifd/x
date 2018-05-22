@@ -196,20 +196,20 @@ key-direction 1
 verb 3" 
 EOF
 
-# Generates the custom ml.ovpn
-        cp /etc/openvpn/client-common.txt ~/ml.ovpn
-        echo "<ca>" >> ~/ml.ovpn
-        cat /etc/openvpn/easy-rsa/pki/ca.crt >> ~/ml.ovpn
-        echo "</ca>" >> ~/ml.ovpn
-        echo "<cert>" >> ~/ml.ovpn
-        cat /etc/openvpn/easy-rsa/pki/issued/client.crt >> ~/ml.ovpn
-        echo "</cert>" >> ~/ml.ovpn
-        echo "<key>" >> ~/ml.ovpn
-        cat /etc/openvpn/easy-rsa/pki/private/client.key >> ~/ml.ovpn
-        echo "</key>" >> ~/ml.ovpn
-        echo "<tls-auth>" >> ~/ml.ovpn
-        cat /etc/openvpn/ta.key >> ~/ml.ovpn
-        echo "</tls-auth>" >> ~/ml.ovpn
+# Generates the custom open.ovpn
+        cp /etc/openvpn/client-common.txt ~/open.ovpn
+        echo "<ca>" >> ~/open.ovpn
+        cat /etc/openvpn/easy-rsa/pki/ca.crt >> ~/open.ovpn
+        echo "</ca>" >> ~/open.ovpn
+        echo "<cert>" >> ~/open.ovpn
+        cat /etc/openvpn/easy-rsa/pki/issued/client.crt >> ~/open.ovpn
+        echo "</cert>" >> ~/open.ovpn
+        echo "<key>" >> ~/open.ovpn
+        cat /etc/openvpn/easy-rsa/pki/private/client.key >> ~/open.ovpn
+        echo "</key>" >> ~/open.ovpn
+        echo "<tls-auth>" >> ~/open.ovpn
+        cat /etc/openvpn/ta.key >> ~/open.ovpn
+        echo "</tls-auth>" >> ~/open.ovpn
 
 }
 function squid {
