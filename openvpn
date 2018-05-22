@@ -266,7 +266,7 @@ sed -i "1 a\iptables -I FORWARD -s 10.8.0.0/24 -j ACCEPT" $RCLOCAL
 sed -i "1 a\iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT" $RCLOCAL
 iptables-save > /etc/sysconfig/iptables
 }
-if [  -s "~/EasyRSA-3.0.1.tgz" ]; then
+if [  -s "/etc/openvpn/easy-rsa/easyrsa" ]; then
         echo "EasyRSA is ok"
 else
 EasyRSA
