@@ -47,7 +47,9 @@ else
 fi
 
 
-
+if [  -s "/usr/sbin/openvpn" ]; then
+        echo "openvpn is ok"
+else
 
 	if [[ "$OS" = 'debian' ]]; then
 		apt-get update
@@ -58,6 +60,7 @@ fi
 		yum install openvpn iptables openssl wget ca-certificates -y
 	fi
 	# An old version of easy-rsa was available by default in some openvpn packages
+fi	
 	if [[ -d /etc/openvpn/easy-rsa/ ]]; then
 		rm -rf /etc/openvpn/easy-rsa/
 	fi
@@ -263,9 +266,22 @@ sed -i "1 a\iptables -I FORWARD -s 10.8.0.0/24 -j ACCEPT" $RCLOCAL
 sed -i "1 a\iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT" $RCLOCAL
 iptables-save > /etc/sysconfig/iptables
 }
+if [  -s "~/EasyRSA-3.0.1.tgz" ]; then
+        echo "EasyRSA is ok"
+else
 EasyRSA
+fi
+if [  -s "/etc/openvpn/server.conf" ]; then
+        echo "server.conf is ok"
+else
 server
+fi
+if [  -s "/usr/sbin/squid" ]; then
+        echo "squid is ok"
+else
+squid
+fi
 ml
 open
-squid
+
 
