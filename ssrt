@@ -1,0 +1,69 @@
+#!/bin/bash
+function docker(){
+cat > /etc/yum.repos.d/docker.repo<<-EOF
+[dockerrepo]
+name=Docker Repository
+baseurl=https://yum.dockerproject.org/repo/main/centos/7/
+enabled=1
+gpgcheck=1
+gpgkey=https://yum.dockerproject.org/gpg
+EOF
+yum install bc  wget ifconfig net-tools -y
+yum install docker-engine  wget  bind-utils -y
+mkdir -p /path/to/share/
+chmod 777 -R /path/to/share/
+ setenforce 0
+systemctl -f enable  docker 
+service docker start
+ if [ $(wget -qO- ipinfo.io/country) == CN ]; then 
+ curl "http://soli-10006287.cossh.myqcloud.com/docker-compose" -o /usr/local/bin/docker-compose
+ else
+curl -L https://github.com/docker/compose/releases/download/1.18.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+ fi
+chmod +x /usr/local/bin/docker-compose
+cat > ~/docker-compose.yml<<-EOF
+#dig solifd.edu.pl +dnssec +multi @127.0.0.1
+version: '2'
+services:
+  shadowsocks:
+    container_name: unbound
+    restart: always
+    image: solidfd/ssr 
+    volumes:
+    - /etc/unbound/local.d/adaway.conf:/etc/unbound/conf.d/adaway.conf:rw
+    dns:
+    - 127.0.0.1
+    ports:
+    - "8080:8080"
+    - "220:22"
+    - "53:53/udp"
+    - "8883:189"
+    - "26:26/udp"
+    tty: true
+EOF
+mkdir -p /etc/unbound/local.d/
+curl "https://raw.githubusercontent.com/ssolifd/x/master/add" -o adblock.sh && bash adblock.sh
+docker-compose up -d
+}
+
+function bbr(){
+#yum install wget -y &>> /dev/null && mkdir ~/cloudapps && cd ~/cloudapps && wget -q http://mirror.cloudcone.net/centos/7/apps/install-bbr.sh -O ~/cloudapps/install-bbr.sh && bash ~/cloudapps/install-bbr.sh && rm -rf ~/cloudapps && cd
+rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org &>> ~/cloud-apps.log
+rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-3.el7.elrepo.noarch.rpm &>> ~/cloud-apps.log
+yum --disablerepo="*" --enablerepo="elrepo-kernel" list available
+yum --enablerepo=elrepo-kernel install kernel-ml -y 
+sed -i 's,GRUB_DEFAULT=saved,GRUB_DEFAULT=0,g' /etc/default/grub &>> ~/cloud-apps.log
+grub2-mkconfig -o /boot/grub2/grub.cfg &>> ~/cloud-apps.log
+printf 'net.core.default_qdisc=fq\n net.ipv4.tcp_congestion_control=bbr' > /etc/sysctl.d/latest-kernel-bbr.conf
+#read -r -p " A reboot is required to complete the installation. Reboot now? [Y,n]: " response
+#if [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]
+#then
+#    printf " System is going into reboot\n\n"
+ #   cd && rm -rf ~/cloudapps &>> ~/cloud-apps.log && shutdown -r now
+#else
+ #   printf " \033[0;32mExiting Cloud Apps without rebooting - make sure to reboot later\033[0m\n\n"
+#fi
+#reboot
+}
+docker
+
