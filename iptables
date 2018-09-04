@@ -1,0 +1,78 @@
+iptables --flush
+iptables -t nat -F
+iptables -t nat -X
+iptables -t nat -P PREROUTING ACCEPT
+iptables -t nat -P POSTROUTING ACCEPT
+iptables -t nat -P OUTPUT ACCEPT
+iptables -t mangle -F
+iptables -t mangle -X
+iptables -t mangle -P PREROUTING ACCEPT
+iptables -t mangle -P INPUT ACCEPT
+iptables -t mangle -P FORWARD ACCEPT
+iptables -t mangle -P OUTPUT ACCEPT
+iptables -t mangle -P POSTROUTING ACCEPT
+iptables -F
+iptables -X
+iptables -P FORWARD ACCEPT
+iptables -P INPUT ACCEPT
+iptables -P OUTPUT ACCEPT
+iptables -t raw -F
+iptables -t raw -X
+iptables -t raw -P PREROUTING ACCEPT
+iptables -t raw -P OUTPUT ACCEPT
+
+#Default Policy
+iptables -P INPUT DROP
+iptables -P FORWARD DROP
+iptables -P OUTPUT DROP
+
+#INPUT Chain
+iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 189 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 399 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport  22 -j ACCEPT
+iptables -A INPUT -i eth0 -p tcp --dport 443 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 8080 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport  445 -j ACCEPT
+#iptables -I INPUT -s 110.185.137.0/24,119.28.89.190 -p tcp --dport 445 -j ACCEPT
+#iptables -A INPUT -p tcp -m multiport  --sport 80,8080,443,25,399 -j ACCEPT
+iptables -I INPUT -s 110.185.137.0/24,119.28.89.190 -p tcp --dport 445 -j ACCEPT
+#iptables -I INPUT -s 110.185.137.207 -p tcp --dport 445 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport  220 -j ACCEPT    
+iptables -A INPUT -p udp --dport 26 -j ACCEPT
+iptables -A OUTPUT -o eth0 -p tcp --sport 443 -m state --state ESTABLISHED -j ACCEPT
+iptables -t nat -A PREROUTING -p tcp --dport 220 -j REDIRECT --to-ports 22
+iptables -t nat -A PREROUTING -p tcp --dport 2445 -j REDIRECT --to-ports 445
+iptables -t nat -A PREROUTING -p udp --dport 2445 -j REDIRECT --to-ports 445
+iptables -A INPUT -i eth0 -p tcp --dport 25 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -o eth0 -p tcp --sport 25 -m state --state ESTABLISHED -j ACCEPT
+iptables -A INPUT -p tcp --dport 80 -i eth0 -m state --state NEW -m recent --set
+iptables -A INPUT -p tcp --dport 80 -m limit --limit 25/minute --limit-burst 100 -j ACCEPT
+iptables -A INPUT -i lo -j ACCEPT
+iptables -A INPUT -p icmp -m icmp --icmp-type 8 -j ACCEPT
+iptables -A INPUT -p icmp -m icmp --icmp-type 11 -j ACCEPT
+iptables -A INPUT -p tcp --syn -m recent --name portscan --rcheck --seconds 60 --hitcount 10 -j LOG
+iptables -A INPUT -p tcp --syn -m recent --name portscan --set -j DROP
+
+#OUTPUT Chain
+iptables -A OUTPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -p udp -m udp --dport 53 -j ACCEPT
+iptables -A OUTPUT -o lo -j ACCEPT
+iptables -A OUTPUT -p icmp -m icmp --icmp-type 8 -j ACCEPT
+iptables -A OUTPUT -p icmp -m icmp --icmp-type 11 -j ACCEPT
+
+iptables -A OUTPUT -o eth0 -p tcp --dport 443 --syn -m state --state NEW -j ACCEPT
+iptables -A OUTPUT -o eth0 -p tcp --dport 80 --syn -m state --state NEW -j ACCEPT
+iptables -A OUTPUT -o eth0 -p tcp --dport 22 --syn -m state --state NEW -j ACCEPT
+iptables -A OUTPUT -o eth0 -p udp --dport 53 -m state --state NEW -j ACCEPT
+iptables -A OUTPUT -m string --string "baidu.com" --algo bm -j DROP
+#iptables  -t nat -A PREROUTING -p tcp --dport 189 -j DNAT --to-destination 127.0.0.1:8080
+iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-ports 8080
+iptables -P INPUT DROP
+iptables -P FORWARD DROP
+iptables -P OUTPUT DROP
+iptables save
+service iptables save
+service iptables restart
+iptables -L -n --line-numbers
