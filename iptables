@@ -74,5 +74,5 @@ iptables -P FORWARD DROP
 iptables -P OUTPUT DROP
 iptables save
 service iptables save
-service iptables restart
+systemctl restart iptables 
 iptables -L -n --line-numbers
