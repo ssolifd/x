@@ -23,9 +23,6 @@ iptables -t raw -P OUTPUT ACCEPT
 
 #INPUT Chain
 iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
-iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
-iptables -A INPUT -p tcp -m tcp --dport 189 -j ACCEPT
-iptables -A INPUT -p tcp -m tcp --dport 399 -j ACCEPT
 iptables -A INPUT -p tcp -m tcp --dport  22 -j ACCEPT
 iptables -A INPUT -i eth0 -p tcp --dport 443 -m state --state NEW,ESTABLISHED -j ACCEPT
 iptables -A INPUT -p tcp -m tcp --dport 8080 -j ACCEPT
