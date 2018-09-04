@@ -69,7 +69,7 @@ iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-ports 8080
 iptables -P INPUT DROP
 iptables -P FORWARD DROP
 iptables -P OUTPUT DROP
-iptables save
+#iptables save
 service iptables save
 systemctl restart iptables 
 iptables -L -n --line-numbers
