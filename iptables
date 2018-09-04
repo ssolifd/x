@@ -21,11 +21,6 @@ iptables -t raw -X
 iptables -t raw -P PREROUTING ACCEPT
 iptables -t raw -P OUTPUT ACCEPT
 
-#Default Policy
-iptables -P INPUT DROP
-iptables -P FORWARD DROP
-iptables -P OUTPUT DROP
-
 #INPUT Chain
 iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
@@ -69,6 +64,8 @@ iptables -A OUTPUT -o eth0 -p udp --dport 53 -m state --state NEW -j ACCEPT
 iptables -A OUTPUT -m string --string "baidu.com" --algo bm -j DROP
 #iptables  -t nat -A PREROUTING -p tcp --dport 189 -j DNAT --to-destination 127.0.0.1:8080
 iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-ports 8080
+
+#Default Policy
 iptables -P INPUT DROP
 iptables -P FORWARD DROP
 iptables -P OUTPUT DROP
