@@ -30,7 +30,7 @@ echo "Please wait while we gather and install blocking lists..."
 
 curl -s http://pgl.yoyo.org/adservers/serverlist.php? | grep -P '(?=^.{5,254}$)(^(?:(?!\d+\.)[a-zA-Z0-9_\-]{1,63}\.?)+(?:[a-zA-Z]{2,})$)' >> /tmp/blackhole
 # Retrieve lists
-curl -s http://www.malwaredomainlist.com/hostslist/hosts.txt | grep -v "#" | awk '{print $2}' >> /tmp/blackhole
+#curl -s http://www.malwaredomainlist.com/hostslist/hosts.txt | grep -v "#" | awk '{print $2}' >> /tmp/blackhole
 curl -s http://winhelp2002.mvps.org/hosts.txt | grep -v "#" | awk '{print $2}' | less >> /tmp/blackhole
 curl -s http://someonewhocares.org/hosts/hosts | grep -v "#" | awk '{print $2}' >> /tmp/blackhole
 curl -s https://hosts-file.net/ad_servers.txt | grep -v "#" | awk '{print $2}' >> /tmp/blackhole
