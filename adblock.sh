@@ -30,16 +30,16 @@ echo "Please wait while we gather and install blocking lists..."
 
 curl -s http://pgl.yoyo.org/adservers/serverlist.php? | grep -P '(?=^.{5,254}$)(^(?:(?!\d+\.)[a-zA-Z0-9_\-]{1,63}\.?)+(?:[a-zA-Z]{2,})$)' >> /tmp/blackhole
 # Retrieve lists
-#curl -s http://www.malwaredomainlist.com/hostslist/hosts.txt | grep -v "#" | awk '{print $2}' >> /tmp/blackhole
-#curl -s http://winhelp2002.mvps.org/hosts.txt | grep -v "#" | awk '{print $2}' | less >> /tmp/blackhole
-#curl -s http://someonewhocares.org/hosts/hosts | grep -v "#" | awk '{print $2}' >> /tmp/blackhole
-#curl -s https://hosts-file.net/ad_servers.txt | grep -v "#" | awk '{print $2}' >> /tmp/blackhole
-#curl -s https://adaway.org/hosts.txt | grep -v "#" | awk '{print $2}' >> /tmp/blackhole
-#curl -s http://malwaredomains.lehigh.edu/files/justdomains >> /tmp/blackhole
-#curl -s https://s3.amazonaws.com/lists.disconnect.me/simple_ad.txt | grep -v "#" >> /tmp/blackhole
-#curl -s https://s3.amazonaws.com/lists.disconnect.me/simple_malvertising.txt | grep -v "#" >> /tmp/blackhole
-#curl -s https://s3.amazonaws.com/lists.disconnect.me/simple_tracking.txt | grep -v "#" >> /tmp/blackhole
-#curl -s https://s3.amazonaws.com/lists.disconnect.me/simple_malware.txt | grep -v "#" >> /tmp/blackhole
+curl -s http://www.malwaredomainlist.com/hostslist/hosts.txt | grep -v "#" | awk '{print $2}' >> /tmp/blackhole
+curl -s http://winhelp2002.mvps.org/hosts.txt | grep -v "#" | awk '{print $2}' | less >> /tmp/blackhole
+curl -s http://someonewhocares.org/hosts/hosts | grep -v "#" | awk '{print $2}' >> /tmp/blackhole
+curl -s https://hosts-file.net/ad_servers.txt | grep -v "#" | awk '{print $2}' >> /tmp/blackhole
+curl -s https://adaway.org/hosts.txt | grep -v "#" | awk '{print $2}' >> /tmp/blackhole
+curl -s http://malwaredomains.lehigh.edu/files/justdomains >> /tmp/blackhole
+curl -s https://s3.amazonaws.com/lists.disconnect.me/simple_ad.txt | grep -v "#" >> /tmp/blackhole
+curl -s https://s3.amazonaws.com/lists.disconnect.me/simple_malvertising.txt | grep -v "#" >> /tmp/blackhole
+curl -s https://s3.amazonaws.com/lists.disconnect.me/simple_tracking.txt | grep -v "#" >> /tmp/blackhole
+curl -s https://s3.amazonaws.com/lists.disconnect.me/simple_malware.txt | grep -v "#" >> /tmp/blackhole
 curl -s https://raw.githubusercontent.com/ssolifd/1/master/hosts | grep -v "#" >> /tmp/blackhole
 # Sanatize output to only domains in /tmp/blackholedomains
 cat /tmp/blackhole | uniq -u > /tmp/blackholeuniq
