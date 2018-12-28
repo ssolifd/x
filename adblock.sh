@@ -60,7 +60,6 @@ done
 tr -d '\r' < /tmp/blackholeconfig > $configurationFile
 
 rm -rf /tmp/blackholeconfig
-echo "Please wait while we gather and install blocking lists..."
 curl -s https://raw.githubusercontent.com/ssolifd/x/master/ad > /tmp/blackhole
 sed -i /#/d  /tmp/blackhole
 cat /tmp/blackhole | uniq -u > /tmp/blackholeuniq
@@ -90,6 +89,3 @@ rm -f /tmp/blackholeconfig
 
 # Confirm completion
 echo "Installed blocklist and set to update daily"
-cd 
-docker-compose down
-docker-compose up -d
