@@ -1,0 +1,21 @@
+cd /root
+wget https://github.com/AdguardTeam/AdGuardHome/releases/download/v0.92-hotfix1/AdGuardHome_v0.92-hotfix1_linux_amd64.tar.gz
+tar xvf AdGuardHome_v0.92-hotfix1_linux_amd64.tar.gz
+cat >/etc/systemd/system/adguard-home.service<<-EOF
+[Unit]
+Description=AdGuard Home
+After=syslog.target
+After=network.target
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/root/AdGuardHome
+ExecStart=/root/AdGuardHome/AdGuardHome --host 0.0.0.0
+Restart=always
+[Install]
+WantedBy=multi-user.target
+EOF
+systemctl enable adguard-home
+systemctl start adguard-home
+netstat -tulpn | grep 3000
