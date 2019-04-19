@@ -1,0 +1,11 @@
+if [[ -f "/var/lib/vnstat" ]]; then
+echo -e "  /var/lib/vnstat"
+else
+mkdir -p /var/lib/vnstat
+chmod 777 -R  /var/lib/vnstat
+fi
+
+systemctl start vnstat
+vnstat -u -i eth0
+systemctl enable vnstat
+systemctl status vnstat
