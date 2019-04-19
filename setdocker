@@ -1,0 +1,51 @@
+if [  -s "/etc/yum.repos.d/docker.repo" ]; then
+        echo "docker.repo is ok"
+else
+cat > /etc/yum.repos.d/docker.repo<<-EOF
+[dockerrepo]
+name=Docker Repository
+baseurl=https://yum.dockerproject.org/repo/main/centos/7/
+enabled=1
+gpgcheck=1
+gpgkey=https://yum.dockerproject.org/gpg
+EOF
+yum install bc  wget  net-tools -y
+yum install docker-engine  wget  bind-utils -y
+setenforce 0
+systemctl -f enable  docker 
+service docker start
+ fi
+ if [ $(wget -qO- ipinfo.io/country) == CN ]; then 
+ curl "http://soli-10006287.cossh.myqcloud.com/docker-compose" -o /usr/local/bin/docker-compose
+ else
+curl -L https://github.com/docker/compose/releases/download/1.23.0-rc2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose 
+fi
+chmod +x /usr/local/bin/docker-compose
+mkdir -p /etc/unbound/local.d/
+curl "https://raw.githubusercontent.com/solifd/x/master/adblock.sh" -o adblock.sh && bash adblock.sh
+ip link delete docker0
+systemctl restart docker
+cat >>~/docker-compose.yml<<-EOF
+#dig solifd.edu.pl +dnssec +multi @127.0.0.1
+version: '2'
+services:
+  shadowsocks:
+    container_name: unbound
+    restart: always
+    image: solidfd/ssr
+    volumes:
+    - /etc/unbound/local.d/adaway.conf:/etc/unbound/conf.d/adaway.conf:rw
+    - /home:/home
+    ports:
+    - "8080:8080/udp"
+    - "8080:8080"
+    - "220:22"
+    - "137-139:137-139"
+    - "2445:445"
+    #- "53:53/udp"
+    - "189:189"
+    - "189:189/udp"
+    - "26:26/udp"
+    tty: true
+EOF
+docker-compose up -d
