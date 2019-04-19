@@ -1,0 +1,12 @@
+kcptun_releases="https://api.github.com/repos/xtaci/kcptun/releases/latest"  
+kcptun_api_filename="/tmp/kcptun_api_file.txt"   
+wget --no-check-certificate -qO- ${kcptun_releases} > ${kcptun_api_filename}
+kcptun_version=`cat ${kcptun_api_filename} | grep \"tag_name\" | cut -d\" -f4`
+kcptun_latest_filename=`cat ${kcptun_api_filename} | grep \"name\" | grep kcptun-linux-amd64 | cut -d\" -f4` 
+kcptun_latest_file_url=`cat ${kcptun_api_filename} | grep \"browser_download_url\" | grep ${kcptun_version}/kcptun-linux-amd64 | cut -d\" -f4`
+wget --no-check-certificate -q ${kcptun_latest_file_url} -O /tmp/${kcptun_latest_filename} 
+tar zxf /tmp/${kcptun_latest_filename}  -C /
+crontab -l > /tmp/cronjob | grep -v "no crontab for root"
+	echo "@reboot /server_linux_amd64 -l :26 -t 127.0.0.1:8080 -key 9PVwKPN3Dr -mode fast2" >> /tmp/cronjob
+	crontab /tmp/cronjob
+	rm -f /tmp/cronjob
