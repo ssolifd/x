@@ -27,11 +27,13 @@ iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT 
 iptables -A INPUT -p tcp -m tcp --dport  22 -j ACCEPT
 iptables -A INPUT -i eth0 -p tcp --dport 443 -m state --state NEW,ESTABLISHED -j ACCEPT
-iptables -A INPUT -p tcp -m tcp --dport 8080 -j ACCEPT
-iptables -A INPUT -p udp -m udp --dport 8080 -j ACCEPT
+iptables -I INPUT -s 110.185.137.0/24,123.148.0.0/16,182.131.64.80 -p tcp --dport 8080 -j ACCEPT
+#iptables -A INPUT -p tcp -m tcp --dport 8080 -j ACCEPT
+#iptables -A INPUT -p udp -m udp --dport 8080 -j ACCEPT
 #iptables -A INPUT -p tcp -m multiport  --sport 80,8080,443,25,399 -j ACCEPT
 iptables -I INPUT -s 110.185.137.0/24,$default,$ip1,$ip2 -p tcp --dport 445 -j ACCEPT
 iptables -A INPUT -p tcp -m tcp --dport  220 -j ACCEPT    
+iptables -A OUTPUT -p tcp -m tcp --dport  445 -j ACCEPT
 iptables -A INPUT -p udp --dport 26 -j ACCEPT
 iptables -A OUTPUT -o eth0 -p tcp --sport 443 -m state --state ESTABLISHED -j ACCEPT
 #iptables -t nat -A PREROUTING -p tcp --dport 220 -j REDIRECT --to-ports 22
