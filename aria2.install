@@ -1,0 +1,35 @@
+yum install aria2 wget unzip -y
+mkdir /root/.aria2
+mkdir -p  /mnt/bt
+cat > /root/.aria2/aria2.conf<<-EOF
+dir=/mnt/bt
+continue=true
+max-concurrent-downloads=10
+max-connection-per-server=5
+min-split-size=10M
+split=20
+max-overall-upload-limit=1M
+disable-ipv6=false
+input-file=/root/.aria2/aria2.session
+save-session=/root/.aria2/aria2.session
+enable-rpc=true
+rpc-allow-origin-all=true
+rpc-listen-all=true
+rpc-listen-port=6800
+rpc-secret=HnkVGSrdig6CF22
+follow-torrent=true
+listen-port=51413
+enable-dht=true
+enable-peer-exchange=true
+peer-id-prefix=-TR2770-
+user-agent=Transmission/2.77
+seed-ratio=0.1
+bt-seed-unverified=true
+EOF
+#wget --no-check-certificate -O "/root/.aria2/dht.dat" "https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/other/Aria2/dht.dat"
+echo '' > /root/.aria2/aria2.session
+curl https://raw.githubusercontent.com/ssolifd/x/master/aria2 -o /etc/init.d/aria2
+chmod +x /etc/init.d/aria2
+		chkconfig --add aria2
+		chkconfig aria2 on
+#nohup aria2c -c "/root/.aria2/aria2.conf" > "/root/.aria2/aria2.log" 2>&1 &
