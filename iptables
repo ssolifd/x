@@ -37,6 +37,8 @@ iptables -A OUTPUT -p tcp -m tcp --dport  445 -j ACCEPT
 iptables -A OUTPUT -p udp -m udp --dport  445 -j ACCEPT
 iptables -A INPUT -p udp --dport 6800 -j ACCEPT
 iptables -A INPUT -p tcp --dport 6800 -j ACCEPT
+iptables -A INPUT -p udp --dport 6900:8900 -j ACCEPT
+iptables -A INPUT -p tcp --dport 6900:8900 -j ACCEPT
 iptables -A INPUT -p udp --dport 51413 -j ACCEPT
 iptables -A INPUT -p tcp --dport 51413 -j ACCEPT
 iptables -A INPUT -p udp --dport 26 -j ACCEPT
