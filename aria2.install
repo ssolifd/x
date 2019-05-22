@@ -1,3 +1,5 @@
+systemctl stop firewalld.service 
+systemctl disable firewalld.service 
 yum install aria2 wget unzip -y
 mkdir /root/.aria2
 mkdir -p  /mnt/bt
@@ -12,8 +14,8 @@ min-split-size=10M
 split=20
 max-overall-upload-limit=1M
 disable-ipv6=false
-input-file=/tmp/aria2.session
-save-session=/tmp/aria2.session
+input-file=/root/.aria2/aria2.session
+save-session=/root/.aria2/aria2.session
 enable-rpc=true
 rpc-allow-origin-all=true
 rpc-listen-all=true
