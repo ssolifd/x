@@ -2,16 +2,18 @@ yum install aria2 wget unzip -y
 mkdir /root/.aria2
 mkdir -p  /mnt/bt
 cat > /root/.aria2/aria2.conf<<-EOF
-dir=/mnt/bt
+dir=/mnt/onedrive
+#dir=/usr/local/caddy/www/aria2/Download
 continue=true
 max-concurrent-downloads=10
-max-connection-per-server=5
+max-connection-per-server=13
+bt-max-peers=100
 min-split-size=10M
 split=20
 max-overall-upload-limit=1M
 disable-ipv6=false
-input-file=/root/.aria2/aria2.session
-save-session=/root/.aria2/aria2.session
+input-file=/tmp/aria2.session
+save-session=/tmp/aria2.session
 enable-rpc=true
 rpc-allow-origin-all=true
 rpc-listen-all=true
@@ -23,6 +25,9 @@ enable-dht=true
 enable-peer-exchange=true
 peer-id-prefix=-TR2770-
 user-agent=Transmission/2.77
+dht-listen-port=6881-6999
+dht-file-path=/root/.aria2/dht.dat
+bt-enable-lpd=true
 seed-ratio=0.1
 bt-seed-unverified=true
 EOF
