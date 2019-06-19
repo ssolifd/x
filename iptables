@@ -1,6 +1,11 @@
 default=$(curl -s ipv4.icanhazip.com)
-ip1=$(nslookup godoq.com  | tail -2 |grep Add | awk '{print $NF}')
+#ip1=$(nslookup godoq.com  | tail -2 |grep Add | awk '{print $NF}')
 ip2=$(nslookup hk.solifd.com  | tail -2 |grep Add | awk '{print $NF}')
+#home=$(grep -E -o "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)" /tmp/CURRENT_WAN_IP.txt)
+if [[ -f "/tmp/CURRENT_WAN_IP.txt" ]]; then
+echo -e "  CURRENT_WAN_IP.txt find"
+home=$(grep -E -o "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2
+[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)" /tmp/CURRENT_WAN_IP.txt)
 iptables --flush
 iptables -t nat -F
 iptables -t nat -X
@@ -27,23 +32,22 @@ iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT 
 iptables -A INPUT -p tcp -m tcp --dport  22 -j ACCEPT
 iptables -A INPUT -i eth0 -p tcp --dport 443 -m state --state NEW,ESTABLISHED -j ACCEPT
-iptables -I INPUT -s 110.185.137.0/24,123.148.0.0/16,182.131.64.80 -p tcp --dport 8080 -j ACCEPT
-#iptables -A INPUT -p tcp -m tcp --dport 8080 -j ACCEPT
-#iptables -A INPUT -p udp -m udp --dport 8080 -j ACCEPT
+iptables -I INPUT -s $home,123.148.0.0/16,123.147.0.0/16 -p tcp --dport 8080 -j ACCEPT
+iptables -I INPUT -s 110.185.138.0/24,123.148.0.0/16,123.147.0.0/16 -p tcp --dport 2333 -j ACCEPT
 #iptables -A INPUT -p tcp -m multiport  --sport 80,8080,443,25,399 -j ACCEPT
-iptables -I INPUT -s 110.185.137.0/24,$default,$ip1,$ip2 -p tcp --dport 445 -j ACCEPT
+#iptables -I INPUT -s 110.185.0.0/24,$default,$ip2 -p tcp --dport 445 -j ACCEPT
 iptables -A INPUT -p tcp -m tcp --dport  220 -j ACCEPT    
 iptables -A OUTPUT -p tcp -m tcp --dport  445 -j ACCEPT
 iptables -A OUTPUT -p udp -m udp --dport  445 -j ACCEPT
-iptables -A INPUT -p udp --dport 6000:8900 -j ACCEPT
-iptables -A INPUT -p tcp --dport 6000:8900 -j ACCEPT
-iptables -A INPUT -p udp --dport 20000:65535 -j ACCEPT
-iptables -A INPUT -p tcp --dport 20000:65535 -j ACCEPT
+iptables -A INPUT -p udp --dport 445 -j ACCEPT
+iptables -A INPUT -p tcp --dport 445 -j ACCEPT
+iptables -A INPUT -p udp --dport 6800 -j ACCEPT
+iptables -A INPUT -p tcp --dport 6800 -j ACCEPT
+iptables -A INPUT -p udp --dport 8100:65534 -j ACCEPT
+iptables -A INPUT -p tcp --dport 8100:65534 -j ACCEPT
 iptables -A INPUT -p udp --dport 26 -j ACCEPT
 iptables -A OUTPUT -o eth0 -p tcp --sport 443 -m state --state ESTABLISHED -j ACCEPT
 #iptables -t nat -A PREROUTING -p tcp --dport 220 -j REDIRECT --to-ports 22
-iptables -t nat -A PREROUTING -p tcp --dport 2445 -j REDIRECT --to-ports 445
-iptables -t nat -A PREROUTING -p udp --dport 2445 -j REDIRECT --to-ports 445
 iptables -A INPUT -i eth0 -p tcp --dport 25 -m state --state NEW,ESTABLISHED -j ACCEPT
 iptables -A OUTPUT -o eth0 -p tcp --sport 25 -m state --state ESTABLISHED -j ACCEPT
 iptables -A INPUT -p tcp --dport 80 -i eth0 -m state --state NEW -m recent --set
@@ -78,11 +82,15 @@ iptables -t nat -A PREROUTING -p udp --dport 2445 -j REDIRECT --to-ports 445
 iptables -t nat -A POSTROUTING -j MASQUERADE
 #iptables -t nat -A PREROUTING -p udp -i eth0 --dport 189 -j DNAT --to 45.32.255.90:189
 #iptables -t nat -A PREROUTING -p tcp -i eth0 --dport 189 -j DNAT --to 45.32.255.90:189
-iptables -I INPUT -m state --state NEW -m tcp -p tcp --dport 8080 -j ACCEPT
-iptables -I INPUT -m state --state NEW -m udp -p udp --dport 8080 -j ACCEPT
-iptables -P INPUT DROP
-iptables -P FORWARD DROP
-iptables -P OUTPUT DROP
+#iptables -I INPUT -m state --state NEW -m tcp -p tcp --dport 8080 -j ACCEPT
+#iptables -I INPUT -m state --state NEW -m udp -p udp --dport 8080 -j ACCEPT
+#iptables -P INPUT DROP
+#iptables -P FORWARD DROP
+#iptables -P OUTPUT DROP
 service iptables save
 service iptables restart
 iptables -L -n --line-numbers
+rm -rf /tmp/CURRENT_WAN_IP.txt
+else
+exit
+fi
